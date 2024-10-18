@@ -48,7 +48,7 @@ services:
     volumes:
       - ./docker-volumes/postgres:/var/lib/postgresql
 
-    rabbitmq:
+  rabbitmq:
     container_name: rabbitmq_container
     image: rabbitmq:3.13-rc-management-alpine
     restart: always
@@ -61,8 +61,8 @@ services:
       # Management UI
       - '15672:15672'
 
-    elasticsearch:
-    #exec elasticsearch_container: curl -s -X POST -u elastic:admin1234 -H "Content-Type: application/json" http://localhost:9200/_security/user/kibana_system/_password -d "{\"password\":\"kibana\"}"
+  elasticsearch:
+  #exec elasticsearch_container: curl -s -X POST -u elastic:admin1234 -H "Content-Type: application/json" http://localhost:9200/_security/user/kibana_system/_password -d "{\"password\":\"kibana\"}"
     container_name: elasticsearch_container
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
     restart: always
@@ -86,3 +86,24 @@ services:
       - ./docker-volumes/elasticsearch-data:/usr/share/elasticsearch/data
     networks:
       - elastic
+
+  kibana:
+    container_name: kibana_container
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    restart: always
+    environment:
+      - ELASTICSEARCH_HOSTS=["http://elasticsearch_container:9200"]
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=kibana
+    ports:
+      - 5601:5601
+    networks:
+      - elastic
+    volumes:
+     - ./kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    depends_on: 
+      - elasticsearch
+
+networks:
+  elastic:
+    name: elastic
