@@ -81,3 +81,14 @@ export {
 } from './interfaces/seller.interface'
 
 export { uploads, uploadsVideo } from './cloudinary'
+
+export {
+    IErrorResponse,
+    IError,
+    CustomError,
+    BadResponseError,
+    NotFoundError,
+    UnauthorizedError,
+    ServerError,
+    ErrnoException
+} from './error-handle'
