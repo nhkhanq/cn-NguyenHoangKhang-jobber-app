@@ -92,3 +92,5 @@ export {
     ServerError,
     ErrnoException
 } from './error-handle'
+
+export { verifyGatewayResquest } from './gateway-middleware'
