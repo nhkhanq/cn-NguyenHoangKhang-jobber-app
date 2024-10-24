@@ -1,7 +1,7 @@
 {
   "name": "notification-service",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/app.ts | pino-pretty -c",
     "build": "tsc --project tsconfig.json && tsc --alias -p tsconfig.json"

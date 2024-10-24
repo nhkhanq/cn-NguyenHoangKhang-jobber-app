@@ -1,11 +1,14 @@
-import express, { Router, Request, Response, request } from 'express'
-import { StatusCodes } from 'http-status-codes'
+import express from 'express';
+import{ Router, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
-const route: Router = express.Router()
+let router = express.Router();
 
 export function healthRoutes(): Router {
-    route.get('/notification-health', (res: Response, req: Request) => {
-        res.status(StatusCodes.OK).send("Notification service is health")
-    })
-    return route
+  router.get('/notification-health', (_req: Request, res: Response) => {
+    res.status(StatusCodes.OK).send('Notification service is healthy');
+  });
+  return router;
 }
+
+export default router;
