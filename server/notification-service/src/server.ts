@@ -5,6 +5,7 @@ import { config } from '@notification/config'
 import { Application } from 'express'
 import { healthRoutes } from '@notification/routes'
 import { checkConnection } from '@notification/elasticsearch'
+import { createConnection } from '@notification/queues/connection'
 
 const logger = pinoLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationServer', 'debug')
 
@@ -19,7 +20,7 @@ export function start(app: Application): void {
 }
 
 async function startQueues(): Promise<void> {
-    //
+    await createConnection()
 }
 
 function startElasticSearch(): void {
