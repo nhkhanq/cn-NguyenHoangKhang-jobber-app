@@ -10,15 +10,6 @@ services:
     volumes:
       - ./docker-volumes/cache:/data
   
-  redis-commander:
-    container_name: redis-commander
-    image: ghcr.io/joeferner/redis-commander:latest
-    restart: always
-    ports:
-      - '8081:8081'
-    environment:
-      - REDIS_HOSTS=local:redis_container:6379
-  
   mongodb:
     container_name: mongodb_container
     image: mongo:latest

@@ -1,27 +1,25 @@
 import { Client } from '@elastic/elasticsearch'
 import { ClusterHealthResponse } from '@elastic/elasticsearch/lib/api/types'
 import { config } from '@notification/config'
-import { pinoLogger } from '@rohanpradev/jobber-shared'
-import { log } from 'winston'
+import { winstonLogger } from '@tanlan/jobber-shared'
+import { Logger } from 'winston'
 
-
-const logger = pinoLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationServer', 'debug')
+const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationElasticSearchServer', 'debug');
 
 const elasticsearchClient = new Client({
     node: `${config.ELASTIC_SEARCH_URL}`
 })
 
 export async function checkConnection(): Promise<void> {
-    let isConnected = false
-    while(!isConnected) {
-        try {
-            const health: ClusterHealthResponse = await elasticsearchClient.cluster.health({})
-            logger.info(`Notification service Elasticsearch is OK, status ${health.status}`)
-            isConnected = true
-        } catch (error) {
-            logger.error('Connect to Elasticsearch failed')
-            logger.error('error' ,'Notification service checkConnection() method', error)
-        }
+    let isConnected = false;
+    while (!isConnected) {
+      try {
+        const health: ClusterHealthResponse = await elasticsearchClient.cluster.health({});
+        log.info(`NotificationService Elasticsearch health status - ${health.status}`);
+        isConnected = true;
+      } catch (error) {
+        log.error('Connection to Elasticsearch failed');
+        log.log('error', 'NotificationService checkConnection() method:', error);
+      }
     }
-
-}
+  }

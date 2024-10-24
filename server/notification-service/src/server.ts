@@ -1,22 +1,23 @@
-import 'express-async-errors'
 import http from 'http'
-import { pinoLogger } from '@rohanpradev/jobber-shared'
-import { config } from '@notification/config'
+import 'express-async-errors'
+import { Logger } from 'winston'
 import { Application } from 'express'
+import { config } from '@notification/config'
 import { healthRoutes } from '@notification/routes'
+import { winstonLogger } from '@tanlan/jobber-shared'
 import { checkConnection } from '@notification/elasticsearch'
 import { createConnection } from '@notification/queues/connection'
 
-const logger = pinoLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationServer', 'debug')
+const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationServer', 'debug')
 
-const SERVER_PORT = process.env.SERVER_PORT || 4001;
+const SERVER_PORT = process.env.SERVER_PORT || 4001
 
 export function start(app: Application): void {
-    startServer(app);
+    startServer(app)
     
     app.use('', healthRoutes())
-    startQueues();
-    startElasticSearch();
+    startQueues()
+    startElasticSearch()
 }
 
 async function startQueues(): Promise<void> {
@@ -29,12 +30,12 @@ function startElasticSearch(): void {
 
 function startServer(app: Application): void {
     try {
-        const httpServer = new http.Server(app)
-        logger.info(`Work in process ${process.pid} on notification server`)
-        httpServer.listen(SERVER_PORT, () => {
-            logger.info(`Notification service running on port ${SERVER_PORT}`)
-        });
+      const httpServer: http.Server = new http.Server(app);
+      log.info(`Worker with process id of ${process.pid} on notification server`)
+      httpServer.listen(SERVER_PORT, () => {
+        log.info(`Notification server running on port ${SERVER_PORT}`)
+      });
     } catch (error) {
-        logger.error('Notification service startServer() method:', error)
+      log.log('error', 'NotificationService startServer() method:', error)
     }
-}
+  }
