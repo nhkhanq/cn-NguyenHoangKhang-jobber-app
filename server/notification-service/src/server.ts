@@ -5,7 +5,7 @@ import { Application } from 'express'
 import { config } from '@notification/config'
 import { healthRoutes } from '@notification/routes'
 import { winstonLogger } from '@tanlan/jobber-shared'
-import { consumeAuthEmailMessage } from '@notification/queues/email.consumer'
+import { consumeAuthEmailMessage, consumeOrderEmailMessage } from '@notification/queues/email.consumer'
 import { checkConnection } from '@notification/elasticsearch'
 import { createConnection } from '@notification/queues/connection'
 import { Channel } from 'amqplib'
@@ -26,8 +26,9 @@ async function startQueues(): Promise<void> {
   const emailChannel: Channel =  await createConnection() as Channel
   await consumeAuthEmailMessage(emailChannel)
   await emailChannel.assertExchange('jobber-email-notification', 'direct')
-  const message = JSON.stringify({ name: 'jobber', service: 'notification service' })
-  emailChannel.publish('jobber-email-notification', 'email-auth', Buffer.from(message))
+  await emailChannel.assertExchange('jobber-order-notification', 'direct')
+  // const message = JSON.stringify({ name: 'jobber', service: 'notification service' })
+  // emailChannel.publish('jobber-email-notification', 'email-auth', Buffer.from(message))
 }
 
 function startElasticSearch(): void {
