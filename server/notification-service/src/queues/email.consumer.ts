@@ -38,3 +38,4 @@ async function consumeAuthEmailMessage(channel: Channel): Promise<void> {
     }
 }
 
+export { consumeAuthEmailMessage }
