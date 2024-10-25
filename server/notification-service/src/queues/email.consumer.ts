@@ -66,7 +66,7 @@ async function consumeOrderEmailMessage(channel: Channel): Promise<void> {
         });
 
     } catch (error) {
-        log.log('error', 'NotificationService consumeOrderEmailMessage() method:', error);
+        log.log('error', 'NotificationService consumeOrderEmailMessage() method:', error)
     }
 }
 
