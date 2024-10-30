@@ -32,8 +32,8 @@
                               <td align="center"
                                 style="font-size: 18px; color: #0e0e0f; font-weight: 700; font-family: Helvetica Neue; line-height: 28px; vertical-align: top; text-align: center; padding: 35px 40px 0px 40px;">
                                 <strong>
-                                  Bạn vừa nhận được một đơn hàng từ <%= buyerUsername %><br />
-                                  Vui lòng xem xét yêu cầu bên dưới:
+                                  You just received an order from <%= buyerUsername %><br />
+                                    Please review the requirements below:
                                 </strong>
                               </td>
                             </tr>
@@ -55,17 +55,17 @@
                               <td
                                 style="font: 16px/22px 'Helvetica Neue', Arial, 'sans-serif'; text-align: left; color: #555555; padding: 40px 40px 0 40px;">
                                 <p>
-                                  Chào <%= sellerUsername %>,
+                                  Hi <%= sellerUsername %>,
                                 </p>
                                 <p>
-                                  Bạn vừa nhận được một đơn hàng từ <%= buyerUsername %>! Thật tuyệt phải không?<br />
-                                  Đơn hàng
+                                  You've just received an order from <%= buyerUsername %>! Feels good, right?<br />
+                                  Order
                                   <a href="<%= orderUrl %>"
                                     style="color: #4aa1f3; text-decoration: none;" target="_blank"
                                     >
                                     #<%= orderId %>
                                   </a>
-                                  sẽ đến hạn vào <strong>
+                                  is due <strong>
                                     <%= orderDue %>
                                   </strong>.
                                 </p>
@@ -80,15 +80,15 @@
                                             <tr>
                                               <td
                                                 style="color: #000000; border-bottom: 1px solid #aeaeae; font-weight: bold; text-align: left;">
-                                                Mặt hàng
+                                                Item
                                               </td>
                                               <td
                                                 style="color: #000000; border-bottom: 1px solid #aeaeae; font-weight: bold; width: 20%;">
-                                                Số lượng
+                                                Qty
                                               </td>
                                               <td
                                                 style="color: #000000; border-bottom: 1px solid #aeaeae; font-weight: bold; width: 40px; text-align: right;">
-                                                Giá
+                                                Price
                                               </td>
                                             </tr>
                                             <tr>
@@ -112,19 +112,19 @@
                                         </table>
                                         <div
                                           style="text-align: right; padding: 10px 8px 10px 0px; color: #000000; font-size: 16px; font-family: arial; font-weight: 700;">
-                                          Tổng cộng: $<%= amount %>
+                                          Total: $<%= amount %>
                                         </div>
                                       </td>
                                     </tr>
                                   </tbody>
                                 </table>
                                 <p style="font-weight: 500; padding-top: 20px;">
-                                  Người mua đã cung cấp các yêu cầu đơn hàng sau:
+                                  The buyer has provided the following order requirements:
                                 </p>
 
                                 <ol style="margin: 0; padding: 0 20px;">
                                   <li>
-                                    <p style="margin-bottom: 0;">Yêu cầu</p>
+                                    <p style="margin-bottom: 0;">Requirements</p>
 
                                     <p style="margin: 0;">
                                       <%= requirements %>
@@ -150,7 +150,7 @@
                                       <td align="center" style="text-align: center;">
                                         <p
                                           style="font: 16px/22px 'Helvetica Neue', Arial, 'sans-serif'; text-align: center; color: #555555; padding: 0 0 20px 0; margin: 0;">
-                                          Bạn đã có tất cả những gì cần thiết chưa?
+                                          Got everything you need?
                                         </p>
                                       </td>
                                     </tr>
@@ -170,7 +170,7 @@
                                             border-radius: 3px;
                                             text-transform: none;"
                                           href="<%= orderUrl %>" target="_blank">
-                                          Xem Đơn Hàng
+                                          View Order
                                         </a>
                                       </td>
                                     </tr>

@@ -56,6 +56,8 @@ services:
     ports:
       - '5672:5672'
       - '15672:15672'
+    networks:
+      - elastic
 
   elasticsearch:
   #exec elasticsearch_container: curl -s -X POST -u elastic:admin1234 -H "Content-Type: application/json" http://localhost:9200/_security/user/kibana_system/_password -d "{\"password\":\"kibana\"}"

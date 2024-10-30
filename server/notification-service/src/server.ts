@@ -10,46 +10,34 @@ import { checkConnection } from '@notification/elasticsearch'
 import { createConnection } from '@notification/queues/connection'
 import { Channel } from 'amqplib'
 
+const SERVER_PORT = 4001
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationServer', 'debug')
 
-const SERVER_PORT = process.env.SERVER_PORT || 4001
-
 export function start(app: Application): void {
-    startServer(app)
-    
-    app.use('', healthRoutes())
-    startQueues()
-    startElasticSearch()
+  startServer(app)
+  app.use('', healthRoutes())
+  startQueues()
+  startElasticSearch()
 }
 
 async function startQueues(): Promise<void> {
-  const emailChannel: Channel =  await createConnection() as Channel
+  const emailChannel: Channel = await createConnection() as Channel;
   await consumeAuthEmailMessages(emailChannel)
-  await emailChannel.assertExchange('jobber-email-notification', 'direct')
-
-  const  veryficationLink=`${config.CLIENT_URL}/confirm_email?v_token=65df4g6d5f4gerge8r7g87bd6b4df546`
-  const messageDetails = {
-    reciverEmail: `${config.SENDER_EMAIL}`,
-    verifyLink: veryficationLink,
-    template: 'verifyEmail'
-  }
-  await emailChannel.assertExchange('jobber-order-notification', 'direct')
-  const message = JSON.stringify(messageDetails)
-  emailChannel.publish('jobber-email-notification', 'email-auth', Buffer.from(message))
+  await consumeOrderEmailMessages(emailChannel)
 }
 
 function startElasticSearch(): void {
-    checkConnection()
+  checkConnection()
 }
 
 function startServer(app: Application): void {
-    try {
-      const httpServer: http.Server = new http.Server(app);
-      log.info(`Worker with process id of ${process.pid} on notification server`)
-      httpServer.listen(SERVER_PORT, () => {
-        log.info(`Notification server running on port ${SERVER_PORT}`)
-      });
-    } catch (error) {
-      log.log('error', 'NotificationService startServer() method:', error)
-    }
+  try {
+    const httpServer: http.Server = new http.Server(app)
+    log.info(`Worker with process id of ${process.pid} on notification server has started`)
+    httpServer.listen(SERVER_PORT, () => {
+      log.info(`Notification server running on port ${SERVER_PORT}`)
+    });
+  } catch (error) {
+    log.log('error', 'NotificationService startServer() method:', error)
   }
+}

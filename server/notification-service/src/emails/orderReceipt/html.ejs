@@ -33,7 +33,7 @@
                             <tr>
                               <td align="center"
                                 style="font-size: 18px; color: #0e0e0f; font-weight: 700; font-family: Helvetica Neue; line-height: 28px; vertical-align: top; text-align: center; padding: 35px 40px 0px 40px;">
-                                <strong>Biên Nhận Đặt Hàng Của Bạn</strong>
+                                <strong>Your Order Receipt</strong>
                               </td>
                             </tr>
 
@@ -53,11 +53,11 @@
                             <tr>
                               <td
                                 style="font: 16px/22px 'Helvetica Neue', Arial, 'sans-serif'; text-align: left; color: #555555; padding: 40px 40px 0 40px;">
-                                <p>Chào <%= buyerUsername %>,</p>
-                                <p>Chúc mừng!</p>
+                                <p>Hi <%= buyerUsername %>,</p>
+                                <p>Congrats!</p>
                                 <p>
-                                  Bạn đã hoàn thành điều gì đó hôm nay. Đây là<br />
-                                  biên nhận của bạn:
+                                  You've accomplished something today. Here's your<br />
+                                  receipt:
                                 </p>
 
                                 <table align="center" style="color: #555; margin: 0; width: 100%;">
@@ -70,13 +70,13 @@
                                             <tr>
                                               <td
                                                 style="color: #000; border-bottom: 1px solid #fff; font-weight: bold; text-align: left;">
-                                                Mặt hàng</td>
+                                                Item</td>
                                               <td
                                                 style="color: #000; border-bottom: 1px solid #fff; font-weight: bold; width: 20%;">
-                                                Số lượng</td>
+                                                Qty</td>
                                               <td
                                                 style="color: #000; border-bottom: 1px solid #fff; font-weight: bold; width: 40px; text-align: right;">
-                                                Giá</td>
+                                                Price</td>
                                             </tr>
 
                                             <tr>
@@ -94,7 +94,7 @@
                                             </tr>
 
                                             <tr style="border-top: 1px solid #fff;">
-                                              <td style="color: #555; text-align: left;" colspan="2">Phí dịch vụ</td>
+                                              <td style="color: #555; text-align: left;" colspan="2">Service Fee</td>
                                               <td style="text-align: right; color: #555;">$<%= serviceFee %></td>
                                             </tr>
                                           </tbody>
@@ -102,7 +102,7 @@
 
                                         <div
                                           style="text-align: right; padding: 10px 8px 10px 0px; color: #000; font-weight: bold; background-color: #f2f2f2; border-top: 1px solid #fff;">
-                                          Tổng cộng: $<%= total %>
+                                          Total: $<%= total %>
                                         </div>
                                       </td>
                                     </tr>
@@ -110,12 +110,12 @@
                                 </table>
 
                                 <p>
-                                  Bạn có thể liên hệ với người bán nếu bạn cần thêm thông tin.
+                                  You can contact the seller if you have more information.
                                 </p>
 
                                 <p>
-                                  Cảm ơn,<br />
-                                  Đội Ngũ Jobber
+                                  Thanks,<br />
+                                  The Jobber Team
                                 </p>
                               </td>
                             </tr>
@@ -141,7 +141,7 @@
                                           text-transform: none;"
                                           href="<%= orderUrl %>"
                                           target="_blank">
-                                          Xem Đơn Hàng Của Bạn
+                                          View Your Order
                                         </a>
                                       </td>
                                     </tr>

@@ -25,7 +25,8 @@ async function consumeAuthEmailMessages(channel: Channel): Promise<void> {
         appIcon: 'https://i.ibb.co/Kyp2m0t/cover.png',
         username,
         verifyLink,
-        resetLink,
+        resetLink
+
       };
       await sendEmail(template, receiverEmail, locals);
       channel.ack(msg!);
