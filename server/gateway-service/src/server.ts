@@ -10,6 +10,7 @@ import { StatusCodes } from 'http-status-codes'
 import http from 'http'
 import { config } from '@gateway/config'
 import { elasticSearch } from '@gateway/elasticsearch'
+import { appRoutes } from '@gateway/routes'
 
 const SERVER_PORT = 4000
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'apiGatewayServer', 'debug')
@@ -24,7 +25,7 @@ export class GatewayServer {
     public start(): void {
         this.securityMiddleware(this.app)
         this.standarMiddleware(this.app)
-        this.routeMiddleware()
+        this.routeMiddleware(this.app)
         this.startElasticSearch(this.app)
         this.errorHandler(this.app)
         this.startServer(this.app)
@@ -56,8 +57,8 @@ export class GatewayServer {
         app.use(urlencoded({ extended: true, limit: '200mb' }))
     }
 
-    private routeMiddleware(): void {
-
+    private routeMiddleware(app: Application): void {
+        appRoutes(app)
     }
 
     private startElasticSearch(app: Application): void {
