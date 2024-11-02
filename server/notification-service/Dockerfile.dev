@@ -9,6 +9,6 @@ COPY tools ./tools
 RUN ls -a
 RUN npm install && npm install -g nodemon
 
-EXPOSE 4001
+EXPOSE 4000
 
 CMD [ "npm", "run", "dev" ]

@@ -126,6 +126,39 @@ services:
       - rabbitmq
     networks:
       - elastic
+  
+  gateway: 
+    container_name: gateway-container
+    build:
+      context: ./server/gateway-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4000:4000
+    env_file: ./server/gateway-service/.env
+    environment:
+      - ENABLE_APM=0
+      - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
+      - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
+      - NODE_ENV=development 
+      - SECRET_KEY_ONE=7cde664875be91b510118e0b19240293
+      - SECRET_KEY_TWO=e84ca0e9b98933491c2611e5e3c1264e
+      - CLIENT_URL=http://localhost:3000
+      - AUTH_BASE_URL=http://localhost:4002
+      - USER_BASE_URL=http://localhost:4003
+      - GIG_BASE_URL=http://localhost:4004
+      - MESSAGE_BASE_URL=http://localhost:4005
+      - ORDER_BASE_URL=http://localhost:4006
+      - REVIEW_BASE_URL=http://loc- alhost:4007
+      - REDIS_HOST=redis://localhost6379
+      - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
+      - ELASTIC_APM_SERVER_URL=http://localhost:8200
+      - ELASTIC_APM_SECRET_TOKEN=
+    depends_on:
+      - elasticsearch
+      - rabbitmq
+    networks:
+      - elastic
 
       
 networks:
