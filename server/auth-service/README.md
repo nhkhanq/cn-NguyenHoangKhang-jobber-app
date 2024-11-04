@@ -1,2 +1,0 @@
-axios
-auth middleware
