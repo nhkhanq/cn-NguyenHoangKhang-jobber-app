@@ -1,12 +1,17 @@
-import { AuthModel } from "@auth/models/auth.schema";
+import { AuthModel } from "@auth/models/auth.schema"
 import { publishDirecMessage } from '@auth/queues/auth.producer'
-import { IAuthBuyerMessageDetails, IAuthDocument } from "@tanlan/jobber-shared";
-import { omit } from "lodash";
-import { authChannel } from '@auth/server';
-import { Model } from 'sequelize';
+import { IAuthBuyerMessageDetails, IAuthDocument, firstLetterUppercase, lowerCase, winstonLogger } from "@tanlan/jobber-shared"
+import { omit } from "lodash"
+import { sign } from 'jsonwebtoken'
+import { authChannel } from '@auth/server'
+import { Model, Op } from 'sequelize'
+import { config } from '@auth/config'
+import { Logger } from 'winston'
+
+const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'authService', 'debug')
 
 export async function createAuthUser(data: IAuthDocument): Promise<IAuthDocument | undefined> {
-      const result: Model = await AuthModel.create(data);
+      const result: Model = await AuthModel.create(data)
       const messageDetails: IAuthBuyerMessageDetails = {
         username: result.dataValues.username!,
         email: result.dataValues.email!,
@@ -16,12 +21,162 @@ export async function createAuthUser(data: IAuthDocument): Promise<IAuthDocument
         type: 'auth'
       }
       await publishDirecMessage(
-        channel,
+        authChannel,
         'jobber-buyer-update',
         'user-buyer',
         JSON.stringify(messageDetails),
         'Buyer details sent to buyer service.'
-      );
-      const userData: IAuthDocument = omit(result.dataValues, ['password']) as IAuthDocument;
+      )
+      const userData: IAuthDocument = omit(result.dataValues, ['password']) as IAuthDocument
       return userData
+    }
+
+  
+    
+export async function getAuthUserById(authId: number): Promise<IAuthDocument | undefined> {
+      try {
+        const user: Model = await AuthModel.findOne({
+          where: { id: authId },
+          attributes: {
+            exclude: ['password']
+          }
+        }) as Model
+        return user?.dataValues
+      } catch (error) {
+        log.error(error)
+      }
+    }
+    
+export async function getUserByUsernameOrEmail(username: string, email: string): Promise<IAuthDocument | undefined> {
+      try {
+        const user: Model = await AuthModel.findOne({
+          where: {
+            [Op.or]: [{ username: firstLetterUppercase(username)}, { email: lowerCase(email)}]
+          },
+        }) as Model
+        return user?.dataValues
+      } catch (error) {
+        log.error(error)
+      }
+    }
+    
+export async function getUserByUsername(username: string): Promise<IAuthDocument | undefined> {
+      try {
+        const user: Model = await AuthModel.findOne({
+          where: { username: firstLetterUppercase(username) },
+        }) as Model
+        return user?.dataValues
+      } catch (error) {
+        log.error(error)
+      }
+    }
+    
+export async function getUserByEmail(email: string): Promise<IAuthDocument | undefined> {
+      try {
+        const user: Model = await AuthModel.findOne({
+          where: { email: lowerCase(email) },
+        }) as Model
+        return user?.dataValues
+      } catch (error) {
+        log.error(error)
+      }
+    }
+    
+export async function getAuthUserByVerificationToken(token: string): Promise<IAuthDocument | undefined> {
+      try {
+        const user: Model = await AuthModel.findOne({
+          where: { emailVerificationToken: token },
+          attributes: {
+            exclude: ['password']
+          }
+        }) as Model
+        return user?.dataValues
+      } catch (error) {
+        log.error(error)
+      }
+    }
+    
+export async function getAuthUserByPasswordToken(token: string): Promise<IAuthDocument | undefined> {
+      try {
+        const user: Model = await AuthModel.findOne({
+          where: {
+            [Op.and]: [{ passwordResetToken: token}, { passwordResetExpires: { [Op.gt]: new Date() }}]
+          },
+        }) as Model
+        return user?.dataValues
+      } catch (error) {
+        log.error(error)
+      }
+    }
+      
+export async function updateVerifyEmailField(authId: number, emailVerified: number, emailVerificationToken?: string): Promise<void> {
+      try {
+        await AuthModel.update(
+        !emailVerificationToken ?  {
+            emailVerified
+          } : {
+            emailVerified,
+            emailVerificationToken
+          },
+          { where: { id: authId }},
+        )
+      } catch (error) {
+        log.error(error)
+      }
+    }
+    
+export async function updatePasswordToken(authId: number, token: string, tokenExpiration: Date): Promise<void> {
+      try {
+        await AuthModel.update(
+          {
+            passwordResetToken: token,
+            passwordResetExpires: tokenExpiration
+          },
+          { where: { id: authId }},
+        )
+      } catch (error) {
+        log.error(error)
+      }
+    }
+
+export async function updatePassword(authId: number, password: string): Promise<void> {
+      try {
+        await AuthModel.update(
+          {
+            password,
+            passwordResetToken: '',
+            passwordResetExpires: new Date()
+          },
+          { where: { id: authId }},
+        )
+      } catch (error) {
+        log.error(error)
+      }
+    }
+    
+export async function updateUserOTP(authId: number, otp: string, otpExpiration: Date, browserName: string, deviceType: string): Promise<void> {
+      try {
+        await AuthModel.update(
+          {
+            otp,
+            otpExpiration,
+            ...(browserName.length > 0 && { browserName }),
+            ...(deviceType.length > 0 && { deviceType })
+          },
+          { where: { id: authId }}
+        )
+      } catch (error) {
+        log.error(error)
+      }
+    }
+    
+export function signToken(id: number, email: string, username: string): string {
+      return sign(
+        {
+          id,
+          email,
+          username
+        },
+        config.JWT_TOKEN!
+      )
     }
