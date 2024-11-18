@@ -7,6 +7,7 @@ import { Application, Request, Response, NextFunction, json, urlencoded } from '
 import hpp from 'hpp'
 import helmet from 'helmet'
 import cors from 'cors'
+import { Channel } from 'amqplib';
 import { verify } from 'jsonwebtoken'
 import compression from 'compression'
 import { checkConnection,  } from '@auth/elasticsearch'
@@ -17,6 +18,7 @@ import { appRoutes } from '@auth/routes'
 const SERVER_PORT = 4002
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'authenticationServer', 'debug')
 
+export let authChannel: Channel;
 
 export function start(app: Application): void {
   securityMiddleware(app)

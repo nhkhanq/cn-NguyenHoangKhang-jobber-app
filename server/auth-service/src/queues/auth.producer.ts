@@ -9,13 +9,16 @@ const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'authServicePr
 export async function publishDirecMessage(
     channel: Channel,
     exchangeName: string,
+    routingKey: string,
     message: string,
     logMessage: string
 ): Promise<void> {
     try {
         if (!channel) {
             channel = await createConnection() as Channel
-        }        
+        } 
+        await channel.assertExchange(exchangeName, 'direct')
+        channel.publish(exchangeName, routingKey, Buffer.from(message))       
     } catch (error) {
         log.log('error', 'AuthService publishDirecMessage() method error', error)
     }
