@@ -3,9 +3,6 @@ import { Logger } from 'winston'
 import { firstLetterUppercase, IAuthDocument, winstonLogger } from '@tanlan/jobber-shared'
 import { Channel } from 'amqplib'
 import { createConnection } from '@auth/queues/connection'
-import { Model } from 'sequelize'
-import { AuthModel } from '@auth/models/auth.schema'
-import { lowerCase } from 'lodash'
 
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'authServiceProducer', 'debug')
 
@@ -25,12 +22,5 @@ export async function publishDirecMessage(
     } catch (error) {
         log.log('error', 'AuthService publishDirecMessage() method error', error)
     }
-}
-
-export async function getUserByUsername(username: string) : Promise<IAuthDocument | null> {
-    const user: Model<IAuthDocument> = await AuthModel.findOne({
-        where:  { username: firstLetterUppercase(username)}      
-    }) as Model
-    return user.dataValues
 }
 

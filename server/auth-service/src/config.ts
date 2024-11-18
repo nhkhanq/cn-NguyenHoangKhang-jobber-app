@@ -8,6 +8,7 @@ class Config {
    public NODE_ENV: string | undefined
    public API_GATEWAY_URL: string | undefined
    public REDIS_HOST: string | undefined
+   public CLIENT_URL: string | undefined
    public MYSQL_DB: string | undefined
    public CLOUD_NAME: string | undefined
    public CLOUD_API_KEY: string | undefined
@@ -21,6 +22,7 @@ class Config {
     this.NODE_ENV = process.env.NODE_ENV || undefined
     this.API_GATEWAY_URL = process.env.API_GATEWAY_URL || undefined
     this.REDIS_HOST = process.env.REDIS_HOST || undefined
+    this.CLIENT_URL = process.env.CLIENT_URL || undefined
     this.MYSQL_DB = process.env.MYSQL_DB || undefined
     this.CLOUD_NAME = process.env.CLOUD_NAME || undefined
     this.CLOUD_API_KEY = process.env.CLOUD_API_KEY || undefined
