@@ -19,7 +19,7 @@ export class AxiosService {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          gatewayToken: requestGatewayToken
+          gatewaytoken: requestGatewayToken
         },
         withCredentials: true
       })
@@ -27,4 +27,4 @@ export class AxiosService {
     }
   }
 
-const axiosTest = new AxiosService(`${config.AUTH_BASE_URL}/api/v1/auth`, 'auth')
+//const axiosTest = new AxiosService(`${config.AUTH_BASE_URL}/api/v1/auth`, 'auth')

@@ -1,6 +1,6 @@
 import { AuthModel } from "@auth/models/auth.schema"
 import { publishDirecMessage } from '@auth/queues/auth.producer'
-import { IAuthBuyerMessageDetails, IAuthDocument, firstLetterUppercase, lowerCase, winstonLogger } from "@tanlan/jobber-shared"
+import { IAuthBuyerMessageDetails, IAuthDocument, firstLetterUppercase, lowerCase, winstonLogger } from "jobber-shared-for-hkhanq"
 import { omit } from "lodash"
 import { sign } from 'jsonwebtoken'
 import { authChannel } from '@auth/server'
@@ -55,6 +55,22 @@ export async function getUserByUsernameOrEmail(username: string, email: string):
           },
         }) as Model
         return user?.dataValues
+      } catch (error) {
+        log.error(error)
+      }
+    }
+
+export async function updateUserOTP(authId: number, otp: string, otpExpiration: Date, browserName: string | '', deviceType: string | 'desktop'): Promise<void> {
+    try {
+      await AuthModel.update(
+        {
+          otp,
+          otpExpiration,
+          ...(browserName.length > 0 && { browserName }),
+          ...(deviceType.length > 0 && { deviceType })
+        },
+        { where: { id: authId }}
+        )
       } catch (error) {
         log.error(error)
       }
@@ -154,22 +170,6 @@ export async function updatePassword(authId: number, password: string): Promise<
       }
     }
     
-export async function updateUserOTP(authId: number, otp: string, otpExpiration: Date, browserName: string, deviceType: string): Promise<void> {
-      try {
-        await AuthModel.update(
-          {
-            otp,
-            otpExpiration,
-            ...(browserName.length > 0 && { browserName }),
-            ...(deviceType.length > 0 && { deviceType })
-          },
-          { where: { id: authId }}
-        )
-      } catch (error) {
-        log.error(error)
-      }
-    }
-    
 export function signToken(id: number, email: string, username: string): string {
       return sign(
         {
@@ -180,3 +180,9 @@ export function signToken(id: number, email: string, username: string): string {
         config.JWT_TOKEN!
       )
     }
+
+
+
+
+
+

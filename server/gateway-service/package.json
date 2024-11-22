@@ -16,7 +16,7 @@
   "description": "",
   "dependencies": {
     "@elastic/elasticsearch": "^8.15.1",
-    "@tanlan/jobber-shared": "^1.0.13",
+    "jobber-shared-for-hkhanq": "^0.1.7",
     "amqplib": "^0.10.4",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",

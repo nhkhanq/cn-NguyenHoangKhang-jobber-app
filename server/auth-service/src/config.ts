@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import cloudinary from 'cloudinary' 
 
 dotenv.config();
 
@@ -29,6 +30,14 @@ class Config {
     this.CLOUD_API_SECRET = process.env.CLOUD_API_SECRET || undefined
     this.RABBITMQ_ENDPOINT = process.env.RABBITMQ_ENDPOINT || undefined
     this.ELASTIC_SEARCH_URL = process.env.ELASTIC_SEARCH_URL || undefined 
+  }
+
+  public cloudinaryConfig(): void {
+      cloudinary.v2.config({
+        cloud_name: this.CLOUD_NAME,
+        api_key: this.CLOUD_API_KEY,
+        api_secret: this.CLOUD_API_SECRET
+      })
   }
 }
 

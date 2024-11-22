@@ -1,6 +1,6 @@
 import http from 'http'
 import 'express-async-errors'
-import { CustomError, IAuthPayload, IErrorResponse, winstonLogger } from '@tanlan/jobber-shared'
+import { CustomError, IAuthPayload, IErrorResponse, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Logger } from 'winston'
 import { config } from '@auth/config'
 import { Application, Request, Response, NextFunction, json, urlencoded } from 'express'
@@ -12,8 +12,6 @@ import { verify } from 'jsonwebtoken'
 import compression from 'compression'
 import { checkConnection,  } from '@auth/elasticsearch'
 import { appRoutes } from '@auth/routes'
-
-
 
 const SERVER_PORT = 4002
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'authenticationServer', 'debug')

@@ -1,6 +1,6 @@
 import { config } from '@auth/config'
 import { Logger } from 'winston'
-import { firstLetterUppercase, IAuthDocument, winstonLogger } from '@tanlan/jobber-shared'
+import { firstLetterUppercase, IAuthDocument, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Channel } from 'amqplib'
 import { createConnection } from '@auth/queues/connection'
 
@@ -23,4 +23,3 @@ export async function publishDirecMessage(
         log.log('error', 'AuthService publishDirecMessage() method error', error)
     }
 }
-

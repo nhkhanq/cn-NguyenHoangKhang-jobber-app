@@ -1,5 +1,5 @@
 import { sequelize } from '@auth/database'
-import { IAuthDocument } from '@tanlan/jobber-shared'
+import { IAuthDocument } from 'jobber-shared-for-hkhanq'
 import { compare, hash } from 'bcryptjs'
 import { DataTypes, DATE, Model, ModelDefined, Optional } from 'sequelize'
 
@@ -17,7 +17,8 @@ interface AuthModelInstanceMethods extends Model {
   const AuthModel: ModelDefined<IAuthDocument, AuthUserCreationAttributes> & AuthModelInstanceMethods = sequelize.define('auths', {
     username: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true, 
+      defaultValue: 'desktop',
     },
     password: {
       type: DataTypes.STRING,
@@ -50,11 +51,13 @@ interface AuthModelInstanceMethods extends Model {
     },
     browserName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
+      defaultValue: 'Unknown'
     },
     deviceType: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true,
+      defaultValue: 'desktop'
     },
     otp: {
       type: DataTypes.STRING

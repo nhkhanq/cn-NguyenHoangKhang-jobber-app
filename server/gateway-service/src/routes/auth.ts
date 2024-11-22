@@ -1,4 +1,4 @@
-import { Signup } from '@gateway/controllers/auth/signup'
+import { SignUp } from '@gateway/controllers/auth/signup'
 import { Health } from '@gateway/controllers/health'
 import express, { Router } from 'express'
 
@@ -10,7 +10,7 @@ class AuthRoutes {
     }
 
     public routes(): Router {
-        this.router.post('/auth/signup', Signup.prototype.create)
+        this.router.post('/auth/signup', SignUp.prototype.create);
         return this.router
     }
 }

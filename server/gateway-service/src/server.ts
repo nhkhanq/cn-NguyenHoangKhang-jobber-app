@@ -1,7 +1,7 @@
 import http from 'http'
 
 import 'express-async-errors'
-import { CustomError, IErrorResponse, winstonLogger } from '@tanlan/jobber-shared'
+import { CustomError, IErrorResponse, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Application, Request, Response, json, urlencoded, NextFunction } from 'express'
 import { Logger } from 'winston'
 import cookieSession from 'cookie-session'
@@ -12,7 +12,7 @@ import compression from 'compression'
 import { StatusCodes } from 'http-status-codes'
 import { config } from '@gateway/config'
 import { elasticSearch } from '@gateway/elasticsearch'
-import { appRoutes } from '@gateway/routes'
+import { authRoutes } from '@gateway/routes/auth'
 import { axiosAuthInstance } from '@gateway/services/api/auth.service'
 import { isAxiosError } from 'axios'
 
@@ -43,7 +43,7 @@ export class GatewayServer {
                 keys: [`${config.SECRET_KEY_ONE}, ${config.SECRET_KEY_TWO}`],
                 maxAge: 24 * 7 * 3600000,
                 secure: config.NODE_ENV !== '',
-                // sameSite: 'none'
+                //sameSite: 'none'
             })
         )
         app.use(hpp())
@@ -69,7 +69,7 @@ export class GatewayServer {
 }
 
 private routeMiddleware(app: Application): void {
-    appRoutes(app)
+    app.use('/api/gateway/v1', authRoutes.routes());
 }
 
 private startElasticSearch(app: Application): void {

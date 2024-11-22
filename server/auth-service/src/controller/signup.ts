@@ -1,6 +1,6 @@
 import { signupSchema } from '@auth/schema/signup'
 import { createAuthUser, getUserByUsernameOrEmail, signToken } from '@auth/services/auth.service'
-import { BadRequestError, firstLetterUppercase, IAuthDocument, IEmailMessageDetails, uploads } from '@tanlan/jobber-shared'
+import { BadRequestError, firstLetterUppercase, IAuthDocument, IEmailMessageDetails, uploads } from 'jobber-shared-for-hkhanq'
 import { UploadApiResponse } from 'cloudinary'
 import { Request, Response } from 'express'
 import { lowerCase } from 'lodash'
