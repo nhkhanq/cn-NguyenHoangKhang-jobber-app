@@ -2,6 +2,7 @@ import { AuthModel } from '@auth/models/auth.schema'
 import { loginSchema } from '@auth/schema/signin'
 import { getUserByEmail, getUserByUsername, signToken } from '@auth/services/auth.service'
 import { Request, Response } from 'express'
+import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, IAuthDocument, isEmail } from 'jobber-shared-for-hkhanq'
 import { omit } from 'lodash'
 
@@ -26,7 +27,7 @@ export async function read(req: Request, res: Response): Promise<void> {
     }
 
  
-    const passwordMatch: boolean = await AuthModel.prototype.comparePassword!(
+    const passwordMatch: boolean = await AuthModel.prototype.comparePassword(
         password,
         existingUser.password!
     );
@@ -42,8 +43,8 @@ export async function read(req: Request, res: Response): Promise<void> {
         existingUser.username!
     );
 
-    const userData: IAuthDocument = omit(existingUser, ['[password]'])
-
+    const userData: IAuthDocument = omit(existingUser, ['password'])
+    res.status(StatusCodes.OK).json({ message: 'User login sucess', user: userData, token: userJWT })
     // Respond to client
     // res.status(200).json({
     //     message: 'User signed in successfully',
