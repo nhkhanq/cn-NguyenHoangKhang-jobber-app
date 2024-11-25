@@ -10,7 +10,7 @@ const elasticsearchClient = new Client({
     node: `${config.ELASTIC_SEARCH_URL}`
 })
 
-export async function checkConnection(): Promise<void> {
+async function checkConnection(): Promise<void> {
     let isConnected = false;
     while (!isConnected) {
       try {
@@ -23,3 +23,26 @@ export async function checkConnection(): Promise<void> {
       }
     }
   }
+
+// async function checkIfIndexExits(indexName: string): Promise<boolean> {
+//   const result: boolean = await elasticsearchClient.indices.exists({ index: indexName })
+//   return result
+// }
+
+export async function createIndex(indexName: string):Promise<void> {
+  try {
+    const result: boolean = await elasticsearchClient.indices.exists({ index: indexName })
+    if(result) {
+      log.info(`Index ${indexName} already exits`)
+    } else {
+      await elasticsearchClient.indices.create({ index: indexName })
+      await elasticsearchClient.indices.refresh({ index: indexName })
+      log.info(`Create index ${indexName}`)
+    }
+  } catch (error) {
+    log.error(`error while create the index ${indexName}`)
+    log.log('error', 'AuthService createIndex() method:', error)
+  }
+}
+
+  export {elasticsearchClient, checkConnection}
