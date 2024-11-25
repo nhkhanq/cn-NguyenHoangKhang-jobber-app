@@ -1,5 +1,5 @@
 import { Client } from '@elastic/elasticsearch'
-import { ClusterHealthResponse } from '@elastic/elasticsearch/lib/api/types'
+import { ClusterHealthResponse, GetResponse } from '@elastic/elasticsearch/lib/api/types'
 import { config } from '@auth/config'
 import { winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Logger } from 'winston'
@@ -42,6 +42,19 @@ export async function createIndex(indexName: string):Promise<void> {
   } catch (error) {
     log.error(`error while create the index ${indexName}`)
     log.log('error', 'AuthService createIndex() method:', error)
+  }
+}
+
+async function getDocumentById(index: string, gigsId: string) {
+  try {
+    const result: GetResponse = await elasticsearchClient.get({
+      index, 
+      id: gigsId
+    })
+    return result._source
+  } catch (error) {
+    log.log('error', 'AuthService getDocumentById() method:', error)
+    return {}
   }
 }
 
