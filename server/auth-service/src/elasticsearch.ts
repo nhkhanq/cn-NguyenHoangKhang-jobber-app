@@ -1,7 +1,7 @@
 import { Client } from '@elastic/elasticsearch'
 import { ClusterHealthResponse, GetResponse } from '@elastic/elasticsearch/lib/api/types'
 import { config } from '@auth/config'
-import { winstonLogger } from 'jobber-shared-for-hkhanq'
+import { winstonLogger, ISellerGig } from 'jobber-shared-for-hkhanq'
 import { Logger } from 'winston'
 
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'authElasticSearchServer', 'debug')
@@ -45,17 +45,17 @@ export async function createIndex(indexName: string):Promise<void> {
   }
 }
 
-async function getDocumentById(index: string, gigsId: string) {
+async function getDocumentById(index: string, gigId: string): Promise<ISellerGig> {
   try {
     const result: GetResponse = await elasticsearchClient.get({
-      index, 
-      id: gigsId
-    })
-    return result._source
+      index,
+      id: gigId
+    });
+    return result._source as ISellerGig;
   } catch (error) {
-    log.log('error', 'AuthService getDocumentById() method:', error)
-    return {}
+    log.log('error', 'AuthService elastcisearch getDocumentById() method error:', error);
+    return {} as ISellerGig;
   }
 }
 
-  export {elasticsearchClient, checkConnection}
+  export {elasticsearchClient, checkConnection, getDocumentById}
