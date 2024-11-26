@@ -17,6 +17,7 @@ import { axiosAuthInstance } from '@gateway/services/api/auth.service'
 import { isAxiosError } from 'axios'
 import { searchRoutes } from '@gateway/routes/search'
 
+
 const SERVER_PORT = 4000
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'apiGatewayServer', 'debug')
 

@@ -11,6 +11,7 @@ export const appRoutes = (app: Application) => {
     app.use('', healthRoutes.routes())
     app.use(BASE_PATH, searchRoutes.routes());
     app.use(BASE_PATH, authRoutes.routes())
+    app.use(BASE_PATH, authRoutes.routes())
     
     app.use(BASE_PATH, authMiddleware.verifyUser, currentUserRoutes.routes())
 }
