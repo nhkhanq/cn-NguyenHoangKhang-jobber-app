@@ -15,6 +15,7 @@ import { elasticSearch } from '@gateway/elasticsearch'
 import { authRoutes } from '@gateway/routes/auth'
 import { axiosAuthInstance } from '@gateway/services/api/auth.service'
 import { isAxiosError } from 'axios'
+import { searchRoutes } from '@gateway/routes/search'
 
 const SERVER_PORT = 4000
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'apiGatewayServer', 'debug')
@@ -70,6 +71,7 @@ export class GatewayServer {
 
 private routeMiddleware(app: Application): void {
     app.use('/api/gateway/v1', authRoutes.routes());
+    app.use('/api/gateway/v1', searchRoutes.routes());
 }
 
 private startElasticSearch(app: Application): void {
