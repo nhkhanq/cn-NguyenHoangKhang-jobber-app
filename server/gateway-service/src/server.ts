@@ -15,6 +15,7 @@ import { authRoutes } from '@gateway/routes/auth'
 import { axiosAuthInstance } from '@gateway/services/api/auth.service'
 import { searchRoutes } from '@gateway/routes/search'
 import { axiosBuyerInstance } from '@gateway/services/api/buyer.service'
+import { axiosSellerInstance } from '@gateway/services/api/seller.service'
 
 
 const SERVER_PORT = 4000
@@ -59,6 +60,7 @@ export class GatewayServer {
       if (req.session?.jwt) {
         axiosAuthInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`
         axiosBuyerInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`
+        axiosSellerInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`
       }
       next()
     })
