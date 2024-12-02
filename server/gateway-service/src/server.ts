@@ -1,5 +1,4 @@
 import http from 'http'
-
 import 'express-async-errors'
 import { CustomError, IErrorResponse, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Application, Request, Response, json, urlencoded, NextFunction } from 'express'
@@ -14,8 +13,8 @@ import { config } from '@gateway/config'
 import { elasticSearch } from '@gateway/elasticsearch'
 import { authRoutes } from '@gateway/routes/auth'
 import { axiosAuthInstance } from '@gateway/services/api/auth.service'
-import { isAxiosError } from 'axios'
 import { searchRoutes } from '@gateway/routes/search'
+import { axiosBuyerInstance } from '@gateway/services/api/buyer.service'
 
 
 const SERVER_PORT = 4000
@@ -59,6 +58,7 @@ export class GatewayServer {
     app.use((req: Request, _res: Response, next: NextFunction) => {
       if (req.session?.jwt) {
         axiosAuthInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`
+        axiosBuyerInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`
       }
       next()
     })
