@@ -1,7 +1,7 @@
 {
-  "name": "users-service",
+  "name": "gig-service",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "start": "pm2 start ./build/src/app.js -i 5 --attach --watch | pino-pretty -c",
     "stop": "pm2 stop all",
@@ -13,7 +13,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "@elastic/elasticsearch": "^8.15.1",
     "@faker-js/faker": "^9.3.0",
@@ -61,5 +60,6 @@
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0"
-  }
+  },
+  "description": ""
 }
