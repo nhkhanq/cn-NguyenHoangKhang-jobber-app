@@ -1,8 +1,8 @@
 import { Application } from 'express'
 import { verifyGatewayRequest } from 'jobber-shared-for-hkhanq'
 import { buyerRoutes } from '@users/routes/buyer'
-import { healthRoutes } from './routes/health'
-import { sellerRoutes } from './routes/seller'
+import { healthRoutes } from '@users/routes/health'
+import { sellerRoutes } from '@users/routes/seller'
 
 const BUYER_BASE_PATH = '/api/v1/buyer'
 const SELLER_BASE_PATH = '/api/v1/seller'
