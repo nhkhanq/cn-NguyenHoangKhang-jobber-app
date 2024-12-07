@@ -10,15 +10,17 @@ import helmet from 'helmet'
 import cors from 'cors'
 import { verify } from 'jsonwebtoken'
 import compression from 'compression'
-import { checkConnection } from '@gig/elasticsearch'
+import { checkConnection, createIndex } from '@gig/elasticsearch'
 import { appRoutes } from '@gig/route'
 // import { createConnection } from '@gig/queues/connection'
 // import { consumeBuyerDirectMessage, consumeSellerDirectMessage } from '@gig/queues/user.consumer'
 import { Channel } from 'amqplib'
+import { createConnection } from '@gig/queues/connection'
 
 
 const SERVER_PORT = 4004
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'gigServer', 'debug')
+let gigChannel: Channel
 
 const start = (app: Application): void => {
   securityMiddleware(app)
@@ -64,10 +66,11 @@ const routesMiddleware = (app: Application): void => {
 
 const startElasticSearch = (): void => {
   checkConnection()
+  createIndex('gigs')
 }
 
 const startQueues  = async (): Promise<void> => {
-
+  gigChannel = await createConnection() as Channel
 }
 
 const usersErrorHandler = (app: Application): void => {
@@ -92,4 +95,4 @@ const startServer = (app: Application): void => {
   }
 }
 
-export { start }
+export { start, gigChannel }
