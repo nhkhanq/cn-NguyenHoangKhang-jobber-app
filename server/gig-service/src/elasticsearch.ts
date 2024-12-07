@@ -79,11 +79,24 @@ const updateIndexedData = async (index: string, itemId: string, gigDocument: unk
   }
 }
 
+const deleteIndexedData = async (index: string, itemId: string): Promise<void> => {
+  try {
+    await elasticSearchClient.delete({
+      index,
+      id: itemId
+    });
+  } catch (error) {
+    log.log('error', 'GigService elasticsearch deleteIndexedData() method error:', error);
+  }
+};
+
 
 export {
+  elasticSearchClient,
   checkConnection,
   createIndex,
   getIndexedData,
   addDataToIndex,
-  updateIndexedData
+  updateIndexedData,
+  deleteIndexedData
 }
