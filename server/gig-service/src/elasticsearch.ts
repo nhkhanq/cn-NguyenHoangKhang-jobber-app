@@ -1,10 +1,10 @@
 import { Client } from '@elastic/elasticsearch'
-import { ClusterHealthResponse } from '@elastic/elasticsearch/lib/api/types'
+import { ClusterHealthResponse, CountResponse, GetResponse } from '@elastic/elasticsearch/lib/api/types'
 import { config } from '@gig/config'
-import { winstonLogger } from 'jobber-shared-for-hkhanq'
+import { ISellerGig, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Logger } from 'winston'
 
-const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'gigsElasticSearchServer', 'debug')
+const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'gigElasticSearchServer', 'debug')
 
 const elasticSearchClient = new Client({
   node: `${config.ELASTIC_SEARCH_URL}`
@@ -24,4 +24,66 @@ const checkConnection = async (): Promise<void> => {
   }
 }
 
-export { checkConnection }
+async function checkIfIndexExist(indexName: string): Promise<boolean> {
+  const result: boolean = await elasticSearchClient.indices.exists({ index: indexName })
+  return result
+}
+
+async function createIndex(indexName: string): Promise<void> {
+  try {
+    const result: boolean = await checkIfIndexExist(indexName)
+    if (result) {
+      log.info(`Index "${indexName}" already exist.`)
+    } else {
+      await elasticSearchClient.indices.create({ index: indexName })
+      await elasticSearchClient.indices.refresh({ index: indexName })
+      log.info(`Created index ${indexName}`)
+    }
+  } catch (error) {
+    log.log('error', 'GigService createIndex() method error:', error)
+  }
+}
+
+
+const getIndexedData = async (index: string, itemId: string): Promise<ISellerGig> => {
+  try {
+    const result: GetResponse = await elasticSearchClient.get({ index, id: itemId })
+    return result._source as ISellerGig
+  } catch (error) {
+    log.log('error', 'GigService elasticsearch getIndexedData() method error:', error)
+    return {} as ISellerGig
+  }
+}
+
+const addDataToIndex = async (index: string, itemId: string, gigDocument: unknown): Promise<void> => {
+  try {
+    await elasticSearchClient.index({
+      index,
+      id: itemId,
+      document: gigDocument
+    })
+  } catch (error) {
+    log.log('error', 'GigService elasticsearch addDataToIndex() method error:', error)
+  }
+}
+
+const updateIndexedData = async (index: string, itemId: string, gigDocument: unknown): Promise<void> => {
+  try {
+    await elasticSearchClient.update({
+      index,
+      id: itemId,
+      doc: gigDocument
+    })
+  } catch (error) {
+    log.log('error', 'GigService elasticsearch updateIndexedData() method error:', error)
+  }
+}
+
+
+export {
+  checkConnection,
+  createIndex,
+  getIndexedData,
+  addDataToIndex,
+  updateIndexedData
+}
