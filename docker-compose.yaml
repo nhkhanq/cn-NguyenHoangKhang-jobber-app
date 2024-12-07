@@ -149,7 +149,7 @@ services:
       - GIG_BASE_URL=http://localhost:4004
       - MESSAGE_BASE_URL=http://localhost:4005
       - ORDER_BASE_URL=http://localhost:4006
-      - REVIEW_BASE_URL=http://loc- alhost:4007
+      - REVIEW_BASE_URL=http://locallhost:4007
       - REDIS_HOST=redis://localhost6379
       - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
       - ELASTIC_APM_SERVER_URL=http://localhost:8200
@@ -191,6 +191,42 @@ services:
       - mysql
     networks:
       - elastic
+
+  users: 
+    container_name: users-container
+    build:
+      context: ./server/users-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4003:4003
+    env_file: ./server/users-service/.env
+    environment:
+      - ENABLE_APM=0
+      - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
+      - DATABASE_URL=mongodb://mongodb_container/jobber-users
+      - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
+      - NODE_ENV=development
+      - API_GATEWAY_URL=http://gateway-container:4000
+      - REDIS_HOST=redis://localhost:6379
+      - MYSQL_DB=mysql://jobber:api@mysql_container:3306/jobber_auth
+      - CLOUD_NAME=dpdyjuznz
+      - CLOUD_API_KEY=435376971633464
+      - REDIS_HOST=redis:localhost:6379
+      - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
+      - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
+      - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
+      - ELASTIC_APM_SERVER_URL=http://localhost:8200
+      - ELASTIC_APM_SECRET_TOKEN=
+    depends_on:
+      - elasticsearch
+      - rabbitmq
+      - mysql
+      - mongodb
+    networks:
+      - elastic
+
+
 
       
 networks:
