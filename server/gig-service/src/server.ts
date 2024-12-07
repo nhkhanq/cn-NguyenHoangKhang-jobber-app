@@ -16,6 +16,7 @@ import { appRoutes } from '@gig/route'
 // import { consumeBuyerDirectMessage, consumeSellerDirectMessage } from '@gig/queues/user.consumer'
 import { Channel } from 'amqplib'
 import { createConnection } from '@gig/queues/connection'
+import { consumeGigDirectMessage, consumeSeedDirectMessages } from '@gig/queues/gig.consumer'
 
 
 const SERVER_PORT = 4004
@@ -71,6 +72,8 @@ const startElasticSearch = (): void => {
 
 const startQueues  = async (): Promise<void> => {
   gigChannel = await createConnection() as Channel
+  await consumeGigDirectMessage(gigChannel)
+  await consumeSeedDirectMessages(gigChannel)
 }
 
 const usersErrorHandler = (app: Application): void => {
