@@ -1,9 +1,10 @@
-import type, {  Config } from '@jest/types'
+import type {  Config } from '@jest/types'
 
 const config: Config.InitialOptions = {
     preset: 'ts-jest',
     testEnvironment: 'node',
     verbose: true,
+    transformIgnorePatterns: [],
     coverageDirectory: 'coverage',
     collectCoverage: true,
     testPathIgnorePatterns: ['/node_modules'],
