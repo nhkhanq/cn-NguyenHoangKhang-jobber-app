@@ -4,6 +4,8 @@ import { gigsSearchBySellerId } from '@gig/services/search.service'
 import { GigModel } from '@gig/models/gig.schema'
 import { publishDirectMessage } from '@gig/queues/gig.producer'
 import { gigChannel } from '@gig/server'
+import { faker } from '@faker-js/faker'
+import { sample } from 'lodash'
 
 
 const getGigById = async (gigId: string): Promise<ISellerGig> => {
@@ -127,6 +129,62 @@ const updateGigReview = async (data: IReviewMessageDetails): Promise<void> => {
   }
 }
 
+const seedData = async (sellers: ISellerDocument[], count: string): Promise<void> => {
+  const categories: string[] = [
+    'Graphics & Design',
+    'Digital Marketing',
+    'Writing & Translation',
+    'Video & Animation',
+    'Music & Audio',
+    'Programming & Tech',
+    'Data',
+    'Business'
+  ]
+  const expectedDelivery: string[] = [
+    '1 Day Delivery',
+    '2 Days Delivery',
+    '3 Days Delivery',
+    '4 Days Delivery',
+    '5 Days Delivery',
+  ]
+  const randomRatings = [
+    { sum: 20, count: 4 },
+    { sum: 10, count: 2 },
+    { sum: 20, count: 4 },
+    { sum: 15, count: 3 },
+    { sum: 5, count: 1 },
+  ]
+
+  for(let i = 0; i < sellers.length; i++) {
+    const sellerDoc: ISellerDocument = sellers[i]
+    const title = `I will ${faker.word.words(5)}`
+    const basicTitle = faker.commerce.productName()
+    const basicDescription = faker.commerce.productDescription()
+    const rating = sample(randomRatings)
+    const gig: ISellerGig = {
+      profilePicture: sellerDoc.profilePicture,
+      sellerId: sellerDoc._id,
+      email: sellerDoc.email,
+      username: sellerDoc.username,
+      title: title.length <= 80 ? title : title.slice(0, 80),
+      basicTitle: basicTitle.length <= 40 ? basicTitle : basicTitle.slice(0, 40),
+      basicDescription: basicDescription.length <= 100 ? basicDescription : basicDescription.slice(0, 100),
+      categories: `${sample(categories)}`,
+      subCategories: [faker.commerce.department(), faker.commerce.department(), faker.commerce.department()],
+      description: faker.lorem.sentences({ min: 2, max: 4 }),
+      tags: [faker.commerce.product(), faker.commerce.product(), faker.commerce.product(), faker.commerce.product()],
+      price: parseInt(faker.commerce.price({ min: 20, max: 30, dec: 0 })),
+      coverImage: faker.image.urlPicsumPhotos(),
+      expectedDelivery: `${sample(expectedDelivery)}`,
+      sortId: parseInt(count, 10) + i + 1,
+      ratingsCount: (i + 1) % 4 === 0 ? rating!['count'] : 0,
+      ratingSum: (i + 1) % 4 === 0 ? rating!['sum'] : 0,
+    }
+    console.log(`SEEDING GIG - ${i + 1} of ${count}`)
+    await createGig(gig)
+  }
+}
+
 
 export {
   getGigById,
@@ -136,5 +194,6 @@ export {
   deleteGig,
   updateGig,
   updateActiveGigProp,
-  updateGigReview
+  updateGigReview,
+  seedData
 }
