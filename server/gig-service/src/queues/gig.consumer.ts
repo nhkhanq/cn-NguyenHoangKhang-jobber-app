@@ -3,7 +3,7 @@ import { winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Channel, ConsumeMessage, Replies } from 'amqplib'
 import { Logger } from 'winston'
 import { createConnection } from '@gig/queues/connection'
-import { updateGigReview } from '@gig/services/gig.service'
+import { seedData, updateGigReview } from '@gig/services/gig.service'
 
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'gigServiceConsumer', 'debug')
 
@@ -40,7 +40,8 @@ const consumeSeedDirectMessages = async (channel: Channel): Promise<void> => {
     const jobberQueue: Replies.AssertQueue = await channel.assertQueue(queueName, { durable: true, autoDelete: false })
     await channel.bindQueue(jobberQueue.queue, exchangeName, routingKey)
     channel.consume(jobberQueue.queue, async (msg: ConsumeMessage | null) => {
-    //
+      const { sellers, count } = JSON.parse(msg!.content.toString())
+      await seedData(sellers, count)
       channel.ack(msg!)
     })
   } catch (error) {
