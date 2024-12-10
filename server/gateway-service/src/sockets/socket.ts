@@ -62,15 +62,5 @@ export class SocketIOAppHandler {
       log.log('error', 'ChatService socket connection error:', error)
       chatSocketClient.connect()
     })
-
-    // custom events
-    chatSocketClient.on('message received', (data: IMessageDocument) => {
-      this.io.emit('message received', data)
-    })
-
-    chatSocketClient.on('message updated', (data: IMessageDocument) => {
-      this.io.emit('message updated', data)
-    })
   }
-
 }

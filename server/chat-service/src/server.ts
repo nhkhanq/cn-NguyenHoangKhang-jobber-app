@@ -1,4 +1,5 @@
 import http from 'http'
+
 import 'express-async-errors'
 import { CustomError, IAuthPayload, IErrorResponse, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Logger } from 'winston'
@@ -10,13 +11,12 @@ import cors from 'cors'
 import { verify } from 'jsonwebtoken'
 import compression from 'compression'
 import { checkConnection } from '@chat/elasticsearch'
-import { appRoutes } from '@chat/route'
+
 import { Channel } from 'amqplib'
 import { Server } from 'socket.io'
 
-
 const SERVER_PORT = 4005
-const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'gigServer', 'debug')
+const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'chatServer', 'debug')
 let chatChannel: Channel
 let socketIOChatObject: Server
 
@@ -24,8 +24,8 @@ const start = (app: Application): void => {
   securityMiddleware(app)
   standardMiddleware(app)
   routesMiddleware(app)
-  startElasticSearch()
   startQueues()
+  startElasticSearch()
   chatErrorHandler(app)
   startServer(app)
 }
@@ -58,15 +58,13 @@ const standardMiddleware = (app: Application): void => {
 }
 
 const routesMiddleware = (app: Application): void => {
-  appRoutes(app)
 }
 
+const startQueues = async (): Promise<void> => {
+}
 
 const startElasticSearch = (): void => {
   checkConnection()
-}
-
-const startQueues  = async (): Promise<void> => {
 }
 
 const chatErrorHandler = (app: Application): void => {
@@ -79,13 +77,12 @@ const chatErrorHandler = (app: Application): void => {
   })
 }
 
-const startServer = (app: Application): void => {
+const startServer = async (app: Application): Promise<void> => {
   try {
     const httpServer: http.Server = new http.Server(app)
-    log.info(`chat server has started with process id ${process.pid}`)
-    httpServer.listen(SERVER_PORT, () => {
-      log.info(`chat server running on port ${SERVER_PORT}`)
-    })
+    const socketIO: Server = await createSocketIO(httpServer)
+    startHttpServer(httpServer)
+    socketIOChatObject = socketIO
   } catch (error) {
     log.log('error', 'ChatService startServer() method error:', error)
   }
@@ -112,4 +109,4 @@ const startHttpServer = (httpServer: http.Server): void => {
   }
 }
 
-export { start, chatChannel }
+export { start, chatChannel, socketIOChatObject }

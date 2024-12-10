@@ -107,23 +107,15 @@ private errorHandler(app: Application): void {
 
 private async startServer(app: Application): Promise<void> {
     try {
-        const httpServer: http.Server  = new http.Server(app)
-        const socketIO: Server = await this.createSocketIO(httpServer)
-        this.startHttpServer(httpServer)
+      const httpServer: http.Server = new http.Server(app)
+      const socketIO: Server = await this.createSocketIO(httpServer)
+      this.startHttpServer(httpServer)
+      this.socketIOConnections(socketIO)
     } catch (error) {
-    log.log('error', 'Gateway Service startServer() method:', error)
+      log.log('error', 'GatewayService startServer() error method:', error)
     }
-}
+  }
 
-private async startHttpServer(httpServer: http.Server): Promise<void> {
-    try {
-        httpServer.listen(SERVER_PORT, () => {
-            log.log('info', `Server is running on port ${SERVER_PORT}`)
-        })   
-    } catch (error) {
-        log.log('error', 'Gateway Service startServer() method:', error)
-    }
-}
 
 private async createSocketIO(httpServer: http.Server): Promise<Server> {
     const io: Server = new Server(httpServer, {
@@ -140,9 +132,19 @@ private async createSocketIO(httpServer: http.Server): Promise<Server> {
     return io
   }
 
-  private socketIOConnections(io: Server): void {
-    const socketIoApp = new SocketIOAppHandler(io);
-    socketIoApp.listen();
+  private async startHttpServer(httpServer: http.Server): Promise<void> {
+    try {
+      log.info(`Gateway server has started with process id ${process.pid}`)
+      httpServer.listen(SERVER_PORT, () => {
+        log.info(`Gateway server running on port ${SERVER_PORT}`)
+      })
+    } catch (error) {
+      log.log('error', 'GatewayService startServer() error method:', error)
+    }
   }
 
+  private socketIOConnections(io: Server): void {
+    const socketIoApp = new SocketIOAppHandler(io)
+    socketIoApp.listen()
+  }
 }
