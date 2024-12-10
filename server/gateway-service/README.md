@@ -1,2 +1,3 @@
 axios
 auth middleware
+socketio
