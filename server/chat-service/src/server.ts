@@ -12,11 +12,13 @@ import compression from 'compression'
 import { checkConnection } from '@chat/elasticsearch'
 import { appRoutes } from '@chat/route'
 import { Channel } from 'amqplib'
+import { Server } from 'socket.io'
 
 
 const SERVER_PORT = 4005
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'gigServer', 'debug')
 let chatChannel: Channel
+let socketIOChatObject: Server
 
 const start = (app: Application): void => {
   securityMiddleware(app)
@@ -86,6 +88,27 @@ const startServer = (app: Application): void => {
     })
   } catch (error) {
     log.log('error', 'ChatService startServer() method error:', error)
+  }
+}
+
+const createSocketIO = async (httpServer: http.Server): Promise<Server> => {
+  const io: Server = new Server(httpServer, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+    }
+  })
+  return io
+}
+
+const startHttpServer = (httpServer: http.Server): void => {
+  try {
+    log.info(`Chat server has started with process id ${process.pid}`)
+    httpServer.listen(SERVER_PORT, () => {
+      log.info(`Chat server running on port ${SERVER_PORT}`)
+    })
+  } catch (error) {
+    log.log('error', 'ChatService startHttpServer() method error:', error)
   }
 }
 

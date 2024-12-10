@@ -29,6 +29,7 @@
     "pino-pretty": "^11.3.0",
     "redis": "^4.7.0",
     "sequelize": "^6.37.5",
+    "socket.io": "^4.8.1",
     "typescript-transform-paths": "^3.5.1",
     "uuid": "^11.0.3",
     "winston": "^3.16.0"
