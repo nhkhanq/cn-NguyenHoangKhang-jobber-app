@@ -16,6 +16,7 @@
   "description": "",
   "dependencies": {
     "@elastic/elasticsearch": "^8.15.1",
+    "@socket.io/redis-adapter": "^8.3.0",
     "amqplib": "^0.10.4",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
@@ -35,6 +36,7 @@
     "nodemon": "^3.1.7",
     "pino-pretty": "^11.3.0",
     "redis": "^4.7.0",
+    "socket.io": "^4.8.1",
     "typescript": "^5.6.3",
     "typescript-transform-paths": "^3.5.1",
     "winston": "^3.16.0"
