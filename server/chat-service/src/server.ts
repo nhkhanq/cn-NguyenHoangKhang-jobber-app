@@ -14,6 +14,7 @@ import { checkConnection } from '@chat/elasticsearch'
 
 import { Channel } from 'amqplib'
 import { Server } from 'socket.io'
+import { createConnection } from './queues/connection'
 
 const SERVER_PORT = 4005
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'chatServer', 'debug')
@@ -61,6 +62,7 @@ const routesMiddleware = (app: Application): void => {
 }
 
 const startQueues = async (): Promise<void> => {
+  createConnection()
 }
 
 const startElasticSearch = (): void => {
