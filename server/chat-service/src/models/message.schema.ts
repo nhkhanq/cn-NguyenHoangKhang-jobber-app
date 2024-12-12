@@ -1,5 +1,5 @@
-import { IMessageDocument } from '@uzochukwueddie/jobber-shared';
-import { Model, Schema, model } from 'mongoose';
+import { IMessageDocument } from 'jobber-shared-for-hkhanq'
+import { Model, Schema, model } from 'mongoose'
 
 const messageSchema: Schema = new Schema(
   {
@@ -33,7 +33,7 @@ const messageSchema: Schema = new Schema(
   {
     versionKey: false
   }
-);
+)
 
-const MessageModel: Model<IMessageDocument> = model<IMessageDocument>('Message', messageSchema, 'Message');
-export { MessageModel };
+const MessageModel: Model<IMessageDocument> = model<IMessageDocument>('Message', messageSchema, 'Message')
+export { MessageModel }

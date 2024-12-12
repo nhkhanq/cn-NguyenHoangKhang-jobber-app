@@ -8,4 +8,4 @@ const conversationSchema: Schema = new Schema({
 })
 
 const ConversationModel: Model<IConversationDocument> = model<IConversationDocument>('Conversation', conversationSchema, 'Conversation')
-export { ConversationModel }
+export { ConversationModel } 

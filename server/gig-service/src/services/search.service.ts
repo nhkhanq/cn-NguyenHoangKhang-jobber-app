@@ -181,4 +181,6 @@ const getTopRatedGigsByCategory = async (searchQuery: string): Promise<ISearchRe
   }
 }
 
+
+
 export { gigsSearchBySellerId, gigsSearch, gigsSearchByCategory, getMoreGigsLikeThis, getTopRatedGigsByCategory }
