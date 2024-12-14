@@ -21,6 +21,7 @@ import { Server } from 'socket.io'
 import { createClient } from 'redis'
 import { createAdapter } from '@socket.io/redis-adapter'
 import { SocketIOAppHandler } from '@gateway/sockets/socket'
+import { axiosMessageInstance } from '@gateway/services/api/message.service'
 
 
 const SERVER_PORT = 4000
@@ -68,6 +69,7 @@ export class GatewayServer {
         axiosBuyerInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`
         axiosSellerInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`
         axiosGigInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`
+        axiosMessageInstance.defaults.headers['Authorization'] = `Bearer ${req.session?.jwt}`;
       }
       next()
     })
