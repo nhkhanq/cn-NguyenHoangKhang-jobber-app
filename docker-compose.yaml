@@ -258,6 +258,38 @@ services:
       networks:
         - elastic
 
+  chat: 
+      container_name: chat-container
+      build:
+        context: ./server/chat-service
+        dockerfile: Dockerfile.dev
+      restart: always
+      ports:
+        - 4004:4004
+      env_file: ./server/chat-service/.env
+      environment:
+        - ENABLE_APM=0
+        - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
+        - DATABASE_URL=mongodb://mongodb_container/jobber-chat
+        - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
+        - NODE_ENV=development
+        - API_GATEWAY_URL=http://gateway-container:4000
+        - REDIS_HOST=redis://localhost:6379
+        - CLOUD_NAME=dpdyjuznz
+        - CLOUD_API_KEY=435376971633464
+        - REDIS_HOST=redis:localhost:6379
+        - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
+        - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
+        - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
+        - ELASTIC_APM_SERVER_URL=http://localhost:8200
+        - ELASTIC_APM_SECRET_TOKEN=
+      depends_on:
+        - elasticsearch
+        - rabbitmq
+        - mongodb
+      networks:
+        - elastic
+
       
 networks:
   elastic:
