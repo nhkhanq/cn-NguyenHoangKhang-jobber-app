@@ -17,10 +17,12 @@ export class SocketIOAppHandler {
     this.io = io
     this.gatewayCache = new GatewayCache()
     this.chatSocketServiceIOConnections()
+    this.orderSocketServiceIOConnections()
   }
 
   public listen(): void {
     this.chatSocketServiceIOConnections()
+    this.orderSocketServiceIOConnections()
     this.io.on('connection', async (socket: Socket) => {
       socket.on('getLoggedInUsers', async () => {
         const response: string[] = await this.gatewayCache.getLoggedInUsersFromCache('loggedInUsers')
@@ -67,8 +69,30 @@ export class SocketIOAppHandler {
     chatSocketClient.on('message received', (data: IMessageDocument) => {
       this.io.emit('message received', data)
     })
+
     chatSocketClient.on('message updated', (data: IMessageDocument) => {
       this.io.emit('message updated', data)
+    })
+  }
+
+  private orderSocketServiceIOConnections(): void {
+    orderSocketClient = io(`${config.ORDER_BASE_URL}`, {
+      transports: ['websocket', 'polling'],
+      secure: true
+    })
+
+    orderSocketClient.on('connect', () => {
+      log.info('OrderService socket connected')
+    })
+
+    orderSocketClient.on('disconnect', (reason: SocketClient.DisconnectReason) => {
+      log.log('error', 'OrderSocket disconnect reason:', reason)
+      orderSocketClient.connect()
+    })
+
+    orderSocketClient.on('connect_error', (error: Error) => {
+      log.log('error', 'OrderService socket connection error:', error)
+      orderSocketClient.connect()
     })
   }
 }
