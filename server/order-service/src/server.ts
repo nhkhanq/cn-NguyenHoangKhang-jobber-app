@@ -1,5 +1,4 @@
 import http from 'http'
-
 import 'express-async-errors'
 import { CustomError, IAuthPayload, IErrorResponse, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Logger } from 'winston'
@@ -11,11 +10,9 @@ import cors from 'cors'
 import { verify } from 'jsonwebtoken'
 import compression from 'compression'
 import { checkConnection } from '@order/elasticsearch'
-import { appRoutes } from '@order/routes'
 import { createConnection } from '@order/queues/connection'
 import { Channel } from 'amqplib'
 import { Server } from 'socket.io'
-import { consumerReviewFanoutMessages } from '@order/queues/order.consumer'
 
 const SERVER_PORT = 4006
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'orderServer', 'debug')
@@ -60,12 +57,10 @@ const standardMiddleware = (app: Application): void => {
 }
 
 const routesMiddleware = (app: Application): void => {
-  appRoutes(app)
 }
 
 const startQueues = async (): Promise<void> => {
   orderChannel = await createConnection() as Channel
-  await consumerReviewFanoutMessages(orderChannel)
 }
 
 const startElasticSearch = (): void => {
