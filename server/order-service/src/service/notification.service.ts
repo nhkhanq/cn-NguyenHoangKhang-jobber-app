@@ -1,6 +1,7 @@
 import { OrderNotificationModel } from '@order/models/notification.schemes'
 import { socketIOOrderObject } from '@order/server'
 import { IOrderDocument, IOrderNotifcation } from 'jobber-shared-for-hkhanq'
+import { getOrderByOrderId } from '@order/service/order.service'
 
 const createNotification = async (data: IOrderNotifcation): Promise<IOrderNotifcation> => {
   const notification: IOrderNotifcation = await OrderNotificationModel.create(data)
@@ -22,6 +23,8 @@ const markNotificationAsRead = async (notificationId: string): Promise<IOrderNot
     },
     { new: true }
   ) as IOrderNotifcation
+  const order: IOrderDocument = await getOrderByOrderId(notification.orderId)
+  socketIOOrderObject.emit('order notification', order, notification)
   return notification
 }
 
