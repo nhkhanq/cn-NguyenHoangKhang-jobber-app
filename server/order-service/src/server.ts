@@ -13,6 +13,7 @@ import { checkConnection } from '@order/elasticsearch'
 import { createConnection } from '@order/queues/connection'
 import { Channel } from 'amqplib'
 import { Server } from 'socket.io'
+import { consumerReviewFanoutMessages } from '@order/queues/order.consumer'
 
 const SERVER_PORT = 4006
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'orderServer', 'debug')
@@ -61,6 +62,7 @@ const routesMiddleware = (app: Application): void => {
 
 const startQueues = async (): Promise<void> => {
   orderChannel = await createConnection() as Channel
+  await consumerReviewFanoutMessages(orderChannel)
 }
 
 const startElasticSearch = (): void => {
