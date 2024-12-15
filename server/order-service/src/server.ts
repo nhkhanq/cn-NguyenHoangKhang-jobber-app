@@ -3,23 +3,24 @@ import http from 'http'
 import 'express-async-errors'
 import { CustomError, IAuthPayload, IErrorResponse, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Logger } from 'winston'
-import { config } from '@chat/config'
+import { config } from '@order/config'
 import { Application, Request, Response, NextFunction, json, urlencoded } from 'express'
 import hpp from 'hpp'
 import helmet from 'helmet'
 import cors from 'cors'
 import { verify } from 'jsonwebtoken'
 import compression from 'compression'
-import { checkConnection } from '@chat/elasticsearch'
-
+import { checkConnection } from '@order/elasticsearch'
+import { appRoutes } from '@order/routes'
+import { createConnection } from '@order/queues/connection'
 import { Channel } from 'amqplib'
 import { Server } from 'socket.io'
-import { createConnection } from './queues/connection'
+import { consumerReviewFanoutMessages } from '@order/queues/order.consumer'
 
-const SERVER_PORT = 4005
-const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'chatServer', 'debug')
-let chatChannel: Channel
-let socketIOChatObject: Server
+const SERVER_PORT = 4006
+const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'orderServer', 'debug')
+let orderChannel: Channel
+let socketIOOrderObject: Server
 
 const start = (app: Application): void => {
   securityMiddleware(app)
@@ -27,7 +28,7 @@ const start = (app: Application): void => {
   routesMiddleware(app)
   startQueues()
   startElasticSearch()
-  chatErrorHandler(app)
+  orderErrorHandler(app)
   startServer(app)
 }
 
@@ -59,19 +60,21 @@ const standardMiddleware = (app: Application): void => {
 }
 
 const routesMiddleware = (app: Application): void => {
+  appRoutes(app)
 }
 
 const startQueues = async (): Promise<void> => {
-  createConnection()
+  orderChannel = await createConnection() as Channel
+  await consumerReviewFanoutMessages(orderChannel)
 }
 
 const startElasticSearch = (): void => {
   checkConnection()
 }
 
-const chatErrorHandler = (app: Application): void => {
+const orderErrorHandler = (app: Application): void => {
   app.use((error: IErrorResponse, _req: Request, res: Response, next: NextFunction) => {
-    log.log('error', `ChatService ${error.comingFrom}:`, error)
+    log.log('error', `OrderService ${error.comingFrom}:`, error)
     if (error instanceof CustomError) {
       res.status(error.statusCode).json(error.serializeErrors())
     }
@@ -84,9 +87,9 @@ const startServer = async (app: Application): Promise<void> => {
     const httpServer: http.Server = new http.Server(app)
     const socketIO: Server = await createSocketIO(httpServer)
     startHttpServer(httpServer)
-    socketIOChatObject = socketIO
+    socketIOOrderObject = socketIO
   } catch (error) {
-    log.log('error', 'ChatService startServer() method error:', error)
+    log.log('error', 'OrderService startServer() method error:', error)
   }
 }
 
@@ -102,13 +105,13 @@ const createSocketIO = async (httpServer: http.Server): Promise<Server> => {
 
 const startHttpServer = (httpServer: http.Server): void => {
   try {
-    log.info(`Chat server has started with process id ${process.pid}`)
+    log.info(`Order server has started with process id ${process.pid}`)
     httpServer.listen(SERVER_PORT, () => {
-      log.info(`Chat server running on port ${SERVER_PORT}`)
+      log.info(`Order server running on port ${SERVER_PORT}`)
     })
   } catch (error) {
-    log.log('error', 'ChatService startHttpServer() method error:', error)
+    log.log('error', 'OrderService startHttpServer() method error:', error)
   }
 }
 
-export { start, chatChannel, socketIOChatObject }
+export { start, orderChannel, socketIOOrderObject }

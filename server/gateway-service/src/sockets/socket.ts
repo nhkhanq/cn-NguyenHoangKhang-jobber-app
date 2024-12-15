@@ -94,5 +94,10 @@ export class SocketIOAppHandler {
       log.log('error', 'OrderService socket connection error:', error)
       orderSocketClient.connect()
     })
+
+     // custom event
+     orderSocketClient.on('order notification', (order: IOrderDocument, notification: IOrderNotifcation) => {
+      this.io.emit('order notification', order, notification);
+    });
   }
 }
