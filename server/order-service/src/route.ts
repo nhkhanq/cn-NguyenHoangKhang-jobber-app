@@ -1,13 +1,14 @@
 import { verifyGatewayRequest } from 'jobber-shared-for-hkhanq'
 import { Application } from 'express'
-import { healthRoutes } from '@chat/routes/health'
-import { messageRoutes } from '@chat/routes/message'
+import { healthRoutes } from '@order/routes/health'
+import { orderRoutes } from '@order/routes/order'
 
-const BASE_PATH = '/api/v1/message'
+
+const BASE_PATH = '/api/v1/order'
 
 const appRoutes = (app: Application): void => {
   app.use('', healthRoutes())
-  app.use(BASE_PATH, verifyGatewayRequest, messageRoutes())
+  app.use(BASE_PATH, verifyGatewayRequest, orderRoutes())
 }
 
 export { appRoutes }
