@@ -11,6 +11,7 @@ class Config {
    public DATABASE_URL: string | undefined
    public CLIENT_URL: string | undefined
    public CLOUD_NAME: string | undefined
+   public STRIPE_API_KEY: string | undefined
    public CLOUD_API_KEY: string | undefined
    public CLOUD_API_SECRET: string | undefined
    public RABBITMQ_ENDPOINT: string | undefined
@@ -23,6 +24,7 @@ class Config {
     this.API_GATEWAY_URL = process.env.API_GATEWAY_URL || undefined
     this.DATABASE_URL = process.env.DATABASE_URL || undefined
     this.CLIENT_URL = process.env.CLIENT_URL || undefined
+    this.STRIPE_API_KEY = process.env.STRIPE_API_KET || undefined
     this.CLOUD_NAME = process.env.CLOUD_NAME || undefined
     this.CLOUD_API_KEY = process.env.CLOUD_API_KEY || undefined
     this.CLOUD_API_SECRET = process.env.CLOUD_API_SECRET || undefined
