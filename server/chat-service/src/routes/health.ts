@@ -1,12 +1,12 @@
-import { health } from '@chat/controllers/health';
-import express, { Router } from 'express';
+import { health } from '@chat/controller/health'
+import express, { Router } from 'express'
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
 const healthRoutes = (): Router => {
-  router.get('/chat-health', health);
+  router.get('/chat-health', health)
 
-  return router;
-};
+  return router
+}
 
-export { healthRoutes };
+export { healthRoutes }

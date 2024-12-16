@@ -13,7 +13,7 @@ const getNotificationsById = async (userToId: string): Promise<IOrderNotifcation
   return notifications
 }
 
-const markNotificationAsRead = async (notificationId: string): Promise<IOrderNotifcation> => {
+const markNotificationAsRead = async (notificationId: string): Promise<IOrderNotifcation | void> => {
   const notification: IOrderNotifcation = await OrderNotificationModel.findOneAndUpdate(
     { _id: notificationId },
     {

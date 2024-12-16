@@ -290,7 +290,7 @@ services:
       networks:
         - elastic
 
-      
+
 networks:
   elastic:
     name: elastic
