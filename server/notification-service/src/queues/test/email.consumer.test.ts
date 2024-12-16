@@ -4,7 +4,7 @@ import amqp from 'amqplib'
 
 jest.mock('@notification/queues/connection')
 jest.mock('amqp')
-jest.mock('@tanlan/jobber-shared')
+jest.mock('jobber-shared-for-hkhanq')
 
 describe('Email Consumer', ()=> {
     beforeEach(() => {

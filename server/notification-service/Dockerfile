@@ -17,7 +17,7 @@ COPY tsconfig.json ./
 COPY .npmrc ./
 RUN npm install -g pm2 npm@latest
 RUN npm ci --production
-COPY --form=builder /app/build ./build
+COPY --from=builder /app/build ./build
 
 EXPOSE 4000
 

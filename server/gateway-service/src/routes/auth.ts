@@ -1,10 +1,9 @@
-import { SignUp } from '@gateway/controllers/auth/signup'
-import { SignIn } from '@gateway/controllers/auth/signin'
-import { AuthSeed } from '@gateway/controllers/auth/seed'
-import { VerifyEmail } from '@gateway/controllers/auth/verify-email'
-import { Health } from '@gateway/controllers/health'
-import express, { Router } from 'express'
 import { Password } from '@gateway/controllers/auth/password'
+import { AuthSeed } from '@gateway/controllers/auth/seed'
+import { SignIn } from '@gateway/controllers/auth/signin'
+import { SignUp } from '@gateway/controllers/auth/signup'
+import { VerifyEmail } from '@gateway/controllers/auth/verify-email'
+import express, { Router } from 'express'
 
 class AuthRoutes {
     private router: Router

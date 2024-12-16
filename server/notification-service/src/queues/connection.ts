@@ -1,7 +1,7 @@
 import client, { Channel, Connection } from 'amqplib'
 import { config } from "@notification/config"
 import { Logger } from 'winston'
-import { winstonLogger } from '@tanlan/jobber-shared'
+import { winstonLogger } from 'jobber-shared-for-hkhanq'
 
 const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'notificationQueueConnection', 'debug');
 

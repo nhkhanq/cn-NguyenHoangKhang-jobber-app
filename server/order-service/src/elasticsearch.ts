@@ -1,6 +1,6 @@
 import { Client } from '@elastic/elasticsearch'
 import { ClusterHealthResponse, CountResponse, GetResponse } from '@elastic/elasticsearch/lib/api/types'
-import { config } from '@chat/config'
+import { config } from '@order/config'
 import { ISellerGig, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Logger } from 'winston'
 

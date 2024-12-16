@@ -1,7 +1,7 @@
 import { Channel, ConsumeMessage } from 'amqplib'
 import { error, Logger } from 'winston'
 import { config } from '@notification/config'
-import { IEmailLocals, winstonLogger } from '@tanlan/jobber-shared'
+import { IEmailLocals, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { createConnection } from '@notification/queues/connection'
 import { sendEmail } from '@notification/queues/mail.transport'
 

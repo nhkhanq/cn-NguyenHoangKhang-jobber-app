@@ -1,5 +1,5 @@
 import { config } from "@notification/config"
-import { IEmailLocals, winstonLogger } from "@tanlan/jobber-shared"
+import { IEmailLocals, winstonLogger } from "jobber-shared-for-hkhanq"
 import { Logger } from "winston"
 import nodemailer, { Transporter } from 'nodemailer'
 import Email from "email-templates"

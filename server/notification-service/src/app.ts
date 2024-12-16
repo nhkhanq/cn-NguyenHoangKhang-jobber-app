@@ -1,6 +1,6 @@
 import { Logger } from 'winston'
-import { winstonLogger } from '@tanlan/jobber-shared'
-import { config } from './config'
+import { winstonLogger } from 'jobber-shared-for-hkhanq'
+import { config } from '@notification/config'
 import express , {Express} from 'express'
 import { start } from '@notification/server'
 
