@@ -10,14 +10,12 @@ import cors from 'cors'
 import { verify } from 'jsonwebtoken'
 import compression from 'compression'
 import { checkConnection } from '@review/elasticsearch'
-// import { createConnection } from '@review/queues/connection'
+import { createConnection } from '@review/queues/connection'
 import { Channel } from 'amqplib'
-import { Server } from 'socket.io'
 
 const SERVER_PORT = 4007
-const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'orderServer', 'debug')
-let orderChannel: Channel
-let socketIOReviewObject: Server
+const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'reviewServer', 'debug')
+let reviewChannel: Channel
 
 const start = (app: Application): void => {
   securityMiddleware(app)
@@ -25,7 +23,7 @@ const start = (app: Application): void => {
   routesMiddleware(app)
   startQueues()
   startElasticSearch()
-  orderErrorHandler(app)
+  reviewErrorHandler(app)
   startServer(app)
 }
 
@@ -60,14 +58,14 @@ const routesMiddleware = (app: Application): void => {
 }
 
 const startQueues = async (): Promise<void> => {
-
+  reviewChannel = await createConnection() as Channel
 }
 
 const startElasticSearch = (): void => {
   checkConnection()
 }
 
-const orderErrorHandler = (app: Application): void => {
+const reviewErrorHandler = (app: Application): void => {
   app.use((error: IErrorResponse, _req: Request, res: Response, next: NextFunction) => {
     log.log('error', `ReviewService ${error.comingFrom}:`, error)
     if (error instanceof CustomError) {
@@ -80,33 +78,13 @@ const orderErrorHandler = (app: Application): void => {
 const startServer = async (app: Application): Promise<void> => {
   try {
     const httpServer: http.Server = new http.Server(app)
-    const socketIO: Server = await createSocketIO(httpServer)
-    startHttpServer(httpServer)
-    socketIOReviewObject = socketIO
-  } catch (error) {
-    log.log('error', 'ReviewService startServer() method error:', error)
-  }
-}
-
-const createSocketIO = async (httpServer: http.Server): Promise<Server> => {
-  const io: Server = new Server(httpServer, {
-    cors: {
-      origin: '*',
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-    }
-  })
-  return io
-}
-
-const startHttpServer = (httpServer: http.Server): void => {
-  try {
     log.info(`Review server has started with process id ${process.pid}`)
     httpServer.listen(SERVER_PORT, () => {
       log.info(`Review server running on port ${SERVER_PORT}`)
     })
   } catch (error) {
-    log.log('error', 'ReviewService startHttpServer() method error:', error)
+    log.log('error', 'ReviewService startServer() method error:', error)
   }
 }
 
-export { start, orderChannel, socketIOReviewObject }
+export { start, reviewChannel }
