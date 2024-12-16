@@ -2,6 +2,8 @@ import { pool } from '@review/database'
 import { publishFanoutMessage } from '@review/queues/review.producer'
 import { reviewChannel } from '@review/server'
 import { IReviewDocument, IReviewMessageDetails } from 'jobber-shared-for-hkhanq'
+import { map } from 'lodash'
+import { QueryResult } from 'pg'
 
 const addReview = async (data: IReviewDocument): Promise<IReviewDocument> => {
   const {
@@ -43,6 +45,19 @@ const addReview = async (data: IReviewDocument): Promise<IReviewDocument> => {
   return rows[0]
 }
 
+const getReviewsByGigId = async (gigId: string): Promise<IReviewDocument[]> => {
+    const reviews: QueryResult = await pool.query('SELECT * FROM reviews WHERE reviews.gigId = $1', [gigId])
+    return reviews.rows
+  }
+  
+  const getReviewsBySellerId = async (sellerId: string): Promise<IReviewDocument[]> => {
+    const reviews: QueryResult = await pool.query('SELECT * FROM reviews WHERE reviews.sellerId = $1 AND reviews.reviewType = $2', [
+      sellerId,
+      'seller-review'
+    ])
+    return reviews.rows
+  };
 
 
-export { addReview }
+
+export { addReview, getReviewsByGigId, getReviewsBySellerId }
