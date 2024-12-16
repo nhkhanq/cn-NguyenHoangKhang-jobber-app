@@ -1,5 +1,7 @@
 import { pool } from '@review/database'
-import { IReviewDocument } from 'jobber-shared-for-hkhanq'
+import { publishFanoutMessage } from '@review/queues/review.producer'
+import { reviewChannel } from '@review/server'
+import { IReviewDocument, IReviewMessageDetails } from 'jobber-shared-for-hkhanq'
 
 const addReview = async (data: IReviewDocument): Promise<IReviewDocument> => {
   const {
@@ -22,8 +24,25 @@ const addReview = async (data: IReviewDocument): Promise<IReviewDocument> => {
     `,
     [gigId, reviewerId, reviewerImage, sellerId, review, rating, orderId, reviewType, reviewerUsername, country, createdAtDate]
   )
+  const messageDetails: IReviewMessageDetails = {
+    gigId: data.gigId,
+    reviewerId: data.reviewerId,
+    sellerId: data.sellerId,
+    review: data.review,
+    rating: data.rating,
+    orderId: data.orderId,
+    createdAt: `${createdAtDate}`,
+    type: `${reviewType}`
+  }
+  await publishFanoutMessage(
+    reviewChannel,
+    'jobber-review',
+    JSON.stringify(messageDetails),
+    'Review details sent to order and users services'
+  )
   return rows[0]
 }
+
 
 
 export { addReview }
