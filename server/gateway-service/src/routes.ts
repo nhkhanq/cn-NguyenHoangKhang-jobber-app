@@ -14,16 +14,15 @@ import { reviewRoutes } from '@gateway/routes/review'
 const BASE_PATH = '/api/gateway/v1'
 
 export const appRoutes = (app: Application) => {
-    app.use('', healthRoutes.routes())
-    app.use(BASE_PATH, searchRoutes.routes())
-    app.use(BASE_PATH, authRoutes.routes())
-    app.use(BASE_PATH, authRoutes.routes())
-    
-    app.use(BASE_PATH, authMiddleware.verifyUser, currentUserRoutes.routes())
-    app.use(BASE_PATH, authMiddleware.verifyUser, buyerRoutes.routes())
-    app.use(BASE_PATH, authMiddleware.verifyUser, sellerRoutes.routes())
-    app.use(BASE_PATH, authMiddleware.verifyUser, gigRoutes.routes())
-    app.use(BASE_PATH, authMiddleware.verifyUser, messageRoutes.routes())
-    app.use(BASE_PATH, authMiddleware.verifyUser, orderRoutes.routes())
-    app.use(BASE_PATH, authMiddleware.verifyUser, reviewRoutes.routes())
+  app.use('', healthRoutes.routes())
+  app.use(BASE_PATH, authRoutes.routes())
+  app.use(BASE_PATH, searchRoutes.routes())
+
+  app.use(BASE_PATH, authMiddleware.verifyUser, currentUserRoutes.routes())
+  app.use(BASE_PATH, authMiddleware.verifyUser, gigRoutes.routes())
+  app.use(BASE_PATH, authMiddleware.verifyUser, buyerRoutes.routes())
+  app.use(BASE_PATH, authMiddleware.verifyUser, sellerRoutes.routes())
+  app.use(BASE_PATH, authMiddleware.verifyUser, messageRoutes.routes())
+  app.use(BASE_PATH, authMiddleware.verifyUser, orderRoutes.routes())
+  app.use(BASE_PATH, authMiddleware.verifyUser, reviewRoutes.routes())
 }

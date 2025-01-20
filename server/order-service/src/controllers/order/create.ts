@@ -8,7 +8,12 @@ import { createOrder } from '@order/service/order.service'
 
 const stripe: Stripe = new Stripe(config.STRIPE_API_KEY!, {
   typescript: true
+  
 })
+
+
+console.log('Stripe API Key:', config.STRIPE_API_KEY)
+
 
 const intent = async (req: Request, res: Response): Promise<void> => {
   const customer: Stripe.Response<Stripe.ApiSearchResult<Stripe.Customer>> = await stripe.customers.search({
@@ -29,8 +34,6 @@ const intent = async (req: Request, res: Response): Promise<void> => {
 
   let paymentIntent: Stripe.Response<Stripe.PaymentIntent>
   if (customerId) {
-    // the service charge is 5.5% of the purchase amount
-    // for purchases under $50, an additional $2 is applied
     const serviceFee: number = req.body.price < 50 ? (5.5 / 100) * req.body.price + 2 : (5.5 / 100) * req.body.price
     paymentIntent = await stripe.paymentIntents.create({
       amount: Math.floor((req.body.price + serviceFee) * 100),

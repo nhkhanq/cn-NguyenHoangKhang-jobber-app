@@ -1,4 +1,5 @@
 import http from 'http'
+
 import 'express-async-errors'
 import { CustomError, IAuthPayload, IErrorResponse, winstonLogger } from 'jobber-shared-for-hkhanq'
 import { Logger } from 'winston'
@@ -10,6 +11,7 @@ import cors from 'cors'
 import { verify } from 'jsonwebtoken'
 import compression from 'compression'
 import { checkConnection } from '@order/elasticsearch'
+import { appRoutes } from '@order/route'
 import { createConnection } from '@order/queues/connection'
 import { Channel } from 'amqplib'
 import { Server } from 'socket.io'
@@ -58,6 +60,7 @@ const standardMiddleware = (app: Application): void => {
 }
 
 const routesMiddleware = (app: Application): void => {
+  appRoutes(app)
 }
 
 const startQueues = async (): Promise<void> => {

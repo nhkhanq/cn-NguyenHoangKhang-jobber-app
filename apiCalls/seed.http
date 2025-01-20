@@ -9,7 +9,7 @@ Accept: application/json
 withCredentials: true
 
 ###
- PUT {{baseUrl}}/{{urlPath}}/seller/seed/4
+ PUT {{baseUrl}}/{{urlPath}}seller/seed/4
 Content-Type: application/json
 Accept: application/json
 withCredentials: true

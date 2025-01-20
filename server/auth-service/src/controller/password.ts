@@ -1,24 +1,24 @@
-import { BadRequestError, IAuthDocument, IEmailMessageDetails } from "jobber-shared-for-hkhanq";
-import * as crypto from 'crypto';
+import { BadRequestError, IAuthDocument, IEmailMessageDetails } from "jobber-shared-for-hkhanq"
+import * as crypto from 'crypto'
 import { config } from '@auth/config'
-import { Request, Response } from "express";
-import { changePasswordSchema, emailSchema } from "@auth/schema/password";
-import { getAuthUserByPasswordToken, getUserByEmail, getUserByUsername, updatePassword, updatePasswordToken } from "@auth/services/auth.service";
-import { publishDirecMessage } from "@auth/queues/auth.producer";
-import { authChannel } from "@auth/server";
-import { StatusCodes } from "http-status-codes";
-import { AuthModel } from "@auth/models/auth.schema";
+import { Request, Response } from "express"
+import { changePasswordSchema, emailSchema } from "@auth/schema/password"
+import { getAuthUserByPasswordToken, getUserByEmail, getUserByUsername, updatePassword, updatePasswordToken } from "@auth/services/auth.service"
+import { publishDirecMessage } from "@auth/queues/auth.producer"
+import { authChannel } from "@auth/server"
+import { StatusCodes } from "http-status-codes"
+import { AuthModel } from "@auth/models/auth.schema"
 
 
-export async function fogotPassword(req: Request, res: Response): Promise<void> {
-    const { error } = emailSchema.validate(req.body);
+export async function forgotPassword(req: Request, res: Response): Promise<void> {
+    const { error } = emailSchema.validate(req.body)
     if (error?.details) {
-        throw new BadRequestError(error.details[0].message, 'Password create() method error');
+        throw new BadRequestError(error.details[0].message, 'Password create() method error')
     }
     const { email } =  req.body
     const existingUser: IAuthDocument | undefined= await getUserByEmail(email)
     if (!existingUser) {
-        throw new BadRequestError('Invalid', 'Password createFogotPassword() method error');
+        throw new BadRequestError('Invalid', 'Password createFogotPassword() method error')
     }
     const randomBytes: Buffer = await Promise.resolve(crypto.randomBytes(20))
     const randomCharacters: string = await randomBytes.toString('hex')
@@ -43,9 +43,9 @@ export async function fogotPassword(req: Request, res: Response): Promise<void> 
 }
 
 export async function resetPassword(req: Request, res: Response): Promise<void> {
-    const { error } = emailSchema.validate(req.body);
+    const { error } = emailSchema.validate(req.body)
     if (error?.details) {
-        throw new BadRequestError(error.details[0].message, 'Password resetPassword() method error');
+        throw new BadRequestError(error.details[0].message, 'Password resetPassword() method error')
     }
     const { password, confimPassword } = req.body
     const { token } = req.params
@@ -73,9 +73,9 @@ export async function resetPassword(req: Request, res: Response): Promise<void> 
     res.status(StatusCodes.OK).json({ message: 'Password reset success'})
 }
 export async function changePassword(req: Request, res: Response): Promise<void> {
-    const { error } = changePasswordSchema.validate(req.body);
+    const { error } = changePasswordSchema.validate(req.body)
     if (error?.details) {
-        throw new BadRequestError(error.details[0].message, 'Password changePassword() method error');
+        throw new BadRequestError(error.details[0].message, 'Password changePassword() method error')
     }
     const { currenPassword, newPassword } = req.body
     if (currenPassword !== newPassword) {

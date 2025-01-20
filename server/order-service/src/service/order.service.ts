@@ -118,7 +118,7 @@ export const approveOrder = async (orderId: string, data: IOrderMessage): Promis
     buyerId: data.buyerId,
     ongoingJobs: data.ongoingJobs,
     completedJobs: data.completedJobs,
-    totalEarnings: data.totalEarnings,
+    totalEarnings: data.totalEarnings, 
     recentDelivery: `${new Date()}`,
     type: 'approve-order'
   }

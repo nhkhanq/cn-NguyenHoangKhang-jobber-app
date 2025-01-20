@@ -11,13 +11,15 @@ const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'mailTransport
 async function emailTemplates(template: string, reciver: string, locals: IEmailLocals): Promise<void> {
     try {
         const smtpTransporter: Transporter = nodemailer.createTransport({
-            host: 'smtp.ethereal.email',
-            port: 587,
+            host: 'smtp.gmail.com',
+            port: 465,
             auth: {
                 user: config.SENDER_EMAIL,
                 pass: config.SENDER_EMAIL_PASSWORD
             }
         })
+        await smtpTransporter.verify();
+        log.info('SMTP server is ready to take our messages');
 
         const email: Email = new Email({
             message: {

@@ -3,6 +3,7 @@ import cloudinary from 'cloudinary'
 
 dotenv.config();
 
+
 class Config {
    public GATEWAY_JWT_TOKEN: string | undefined
    public JWT_TOKEN: string | undefined

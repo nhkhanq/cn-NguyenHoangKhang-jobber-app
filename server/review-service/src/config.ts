@@ -3,6 +3,7 @@ import cloudinary from 'cloudinary'
 
 dotenv.config()
 
+
 class Config {
   public DATABASE_HOST: string | undefined
   public DATABASE_USER: string | undefined

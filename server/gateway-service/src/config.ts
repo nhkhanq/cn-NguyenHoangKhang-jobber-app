@@ -2,7 +2,6 @@ import * as dotenv from 'dotenv'
 
 dotenv.config();
 
-
 class Config {
   public GATEWAY_JWT_TOKEN: string | undefined
   public JWT_TOKEN: string | undefined

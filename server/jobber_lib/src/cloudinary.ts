@@ -18,7 +18,7 @@ export function uploads(
             },
             (error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
                 if (error) resolve(error)
-                resolve(result);
+                resolve(result)
             }
         )
     })
@@ -41,7 +41,7 @@ export function uploadsVideo(
             },
             (error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
                 if (error) resolve(error)
-                resolve(result);
+                resolve(result)
             }
         )
     })

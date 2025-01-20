@@ -6,8 +6,8 @@ import { start } from '@users/server'
 const initilize = (): void => {
   config.cloudinaryConfig()
   databaseConnection()
-  const app: Express = express();
-  start(app);
+  const app: Express = express()
+  start(app)
 }
 
 initilize()
