@@ -1,52 +1,67 @@
-import { Channel, ConsumeMessage } from 'amqplib'
-import { error, Logger } from 'winston'
-import { config } from '@notification/config'
-import { IEmailLocals, winstonLogger } from 'jobber-shared-for-hkhanq'
-import { createConnection } from '@notification/queues/connection'
-import { sendEmail } from '@notification/queues/mail.transport'
+import { Channel, ConsumeMessage } from "amqplib";
+import { error, Logger } from "winston";
+import { config } from "@notification/config";
+import { IEmailLocals, winstonLogger } from "jobber-shared-for-hkhanq";
+import { createConnection } from "@notification/queues/connection";
+import { sendEmail } from "@notification/queues/mail.transport";
 
-const log: Logger = winstonLogger(`${config.ELASTIC_SEARCH_URL}`, 'emailConsumer', 'debug')
+const log: Logger = winstonLogger(
+  `${config.ELASTIC_SEARCH_URL}`,
+  "emailConsumer",
+  "debug"
+);
 
 async function consumeAuthEmailMessages(channel: Channel): Promise<void> {
   try {
     if (!channel) {
-      channel = await createConnection() as Channel
+      channel = (await createConnection()) as Channel;
     }
-    const exchangeName = 'jobber-email-notification'
-    const routingKey = 'auth-email'
-    const queueName = 'auth-email-queue'
-    await channel.assertExchange(exchangeName, 'direct')
-    const jobberQueue = await channel.assertQueue(queueName, { durable: true, autoDelete: false })
-    await channel.bindQueue(jobberQueue.queue, exchangeName, routingKey)
+    const exchangeName = "jobber-email-notification";
+    const routingKey = "auth-email";
+    const queueName = "auth-email-queue";
+    await channel.assertExchange(exchangeName, "direct");
+    const jobberQueue = await channel.assertQueue(queueName, {
+      durable: true,
+      autoDelete: false,
+    });
+    await channel.bindQueue(jobberQueue.queue, exchangeName, routingKey);
     channel.consume(jobberQueue.queue, async (msg: ConsumeMessage | null) => {
-      const { receiverEmail, username, verifyLink, resetLink, template, otp } = JSON.parse(msg!.content.toString())
+      const { receiverEmail, username, verifyLink, resetLink, template, otp } =
+        JSON.parse(msg!.content.toString());
       const locals: IEmailLocals = {
         appLink: `${config.CLIENT_URL}`,
-        appIcon: 'https://i.ibb.co/Kyp2m0t/cover.png',
+        appIcon: "https://i.ibb.co/Kyp2m0t/cover.png",
         username,
         verifyLink,
         resetLink,
-        otp
-      }
-      await sendEmail(template, receiverEmail, locals)
-      channel.ack(msg!)
-    })
+        otp,
+      };
+      await sendEmail(template, receiverEmail, locals);
+      channel.ack(msg!);
+    });
   } catch (error) {
-    log.log('error', 'NotificationService EmailConsumer consumeAuthEmailMessages() method error:', error)
+    log.log(
+      "error",
+      "NotificationService EmailConsumer consumeAuthEmailMessages() method error:",
+      error
+    );
   }
 }
 
 async function consumeOrderEmailMessages(channel: Channel): Promise<void> {
   try {
     if (!channel) {
-      channel = await createConnection() as Channel
+      channel = (await createConnection()) as Channel;
     }
-    const exchangeName = 'jobber-order-notification'
-    const routingKey = 'order-email'
-    const queueName = 'order-email-queue'
-    await channel.assertExchange(exchangeName, 'direct')
-    const jobberQueue = await channel.assertQueue(queueName, { durable: true, autoDelete: false })
-    await channel.bindQueue(jobberQueue.queue, exchangeName, routingKey)
+    const exchangeName = "jobber-order-notification";
+    const routingKey = "order-email";
+    const queueName = "order-email-queue";
+    await channel.assertExchange(exchangeName, "direct");
+    const jobberQueue = await channel.assertQueue(queueName, {
+      durable: true,
+      autoDelete: false,
+    });
+    await channel.bindQueue(jobberQueue.queue, exchangeName, routingKey);
     channel.consume(jobberQueue.queue, async (msg: ConsumeMessage | null) => {
       const {
         receiverEmail,
@@ -72,11 +87,11 @@ async function consumeOrderEmailMessages(channel: Channel): Promise<void> {
         type,
         message,
         serviceFee,
-        total
-      } = JSON.parse(msg!.content.toString())
+        total,
+      } = JSON.parse(msg!.content.toString());
       const locals: IEmailLocals = {
         appLink: `${config.CLIENT_URL}`,
-        appIcon: 'https://i.ibb.co/Kyp2m0t/cover.png',
+        appIcon: "https://i.ibb.co/Kyp2m0t/cover.png",
         username,
         sender,
         offerLink,
@@ -98,19 +113,23 @@ async function consumeOrderEmailMessages(channel: Channel): Promise<void> {
         type,
         message,
         serviceFee,
-        total
-      }
-      if (template === 'orderPlaced') {
-        await sendEmail('orderPlaced', receiverEmail, locals)
-        await sendEmail('orderReceipt', receiverEmail, locals)
+        total,
+      };
+      if (template === "orderPlaced") {
+        await sendEmail("orderPlaced", receiverEmail, locals);
+        await sendEmail("orderReceipt", receiverEmail, locals);
       } else {
-        await sendEmail(template, receiverEmail, locals)
+        await sendEmail(template, receiverEmail, locals);
       }
-      channel.ack(msg!)
-    })
+      channel.ack(msg!);
+    });
   } catch (error) {
-    log.log('error', 'NotificationService EmailConsumer consumeOrderEmailMessages() method error:', error)
+    log.log(
+      "error",
+      "NotificationService EmailConsumer consumeOrderEmailMessages() method error:",
+      error
+    );
   }
 }
 
-export { consumeAuthEmailMessages, consumeOrderEmailMessages }
+export { consumeAuthEmailMessages, consumeOrderEmailMessages };
