@@ -1,34 +1,31 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "importHelpers": true,
+    "target": "ES2015",
     "lib": ["dom", "ES2015"],
     "module": "commonjs",
+    "baseUrl": ".",
+    "outDir": "./build",
+    "rootDir": ".",
+    "strict": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "moduleResolution": "node",
-    "noEmitOnError": true,
-    "outDir": "build",
-    "rootDir": "src",
     "esModuleInterop": true,
     "sourceMap": true,
-    "strict": true,
-    "target": "es2021",
+    "alwaysStrict": true,
+    "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "pretty": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true,
     "plugins": [
       { "transform": "typescript-transform-paths" },
-      { "transform": "typescript-transform-paths", "afterDeclarations": true },
+      { "transform": "typescript-transform-paths", "afterDeclarations": true }
     ],
-    "baseUrl": "./",
     "paths": {
       "@auth/*": ["src/*"]
     }
-  },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  }
 }

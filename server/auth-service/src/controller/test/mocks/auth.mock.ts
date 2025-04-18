@@ -1,50 +1,53 @@
 import { IAuthDocument, IAuthPayload } from "jobber-shared-for-hkhanq";
 import { Response } from "express";
 
-export interface Ijwt {
+export const authMockRequest = (
+  sessionData: IJWT,
+  body: IAuthMock,
+  currentUser?: IAuthPayload | null,
+  params?: unknown
+) => ({
+  session: sessionData,
+  body,
+  params,
+  currentUser,
+});
+
+export const authMockResponse = (): Response => {
+  const res: Response = {} as Response;
+  res.status = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  return res;
+};
+
+export interface IJWT {
   jwt?: string;
 }
 
 export interface IAuthMock {
   id?: number;
   username?: string;
-  email: string;
-  password: string;
-  createAt?: Date | string;
+  email?: string;
+  password?: string;
+  createdAt?: Date | string;
 }
-
-export const authRequest = (
-  sessionData: Ijwt,
-  body: IAuthMock,
-  currentUser?: IAuthPayload | null,
-  params?: unknown
-) => {
-  return { session: sessionData, body, currentUser, params };
-};
-
-export const authMockResponse = (): Response => {
-  const res: Partial<Response> = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn().mockReturnThis(),
-  };
-  return res as Response;
-};
 
 export const authUserPayload: IAuthPayload = {
   id: 1,
-  username: "hkhanq",
-  email: "hkhanq@gmail.com",
-  iat: 123465487,
+  username: "Manny",
+  email: "manny@test.com",
+  iat: 1235282483,
 };
 
-export const authMock = {
+export const authMock: IAuthDocument = {
   id: 1,
-  profilePublicId: "21354654987",
-  username: "Khang",
-  email: "hkhanq@gmail.com",
-  country: "VietNam",
+  profilePublicId: "123428712838478382",
+  username: "Manny",
+  email: "manny@test.com",
+  country: "Brazil",
+  profilePicture: "",
   emailVerified: 1,
-  createdAt: "2025-01-01T07:42:42.431Z",
+  createdAt: "2023-12-19T07:42:24.431Z",
   comparePassword: () => {},
   hashPassword: () => false,
 } as unknown as IAuthDocument;
