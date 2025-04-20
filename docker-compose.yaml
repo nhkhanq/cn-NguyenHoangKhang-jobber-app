@@ -1,15 +1,15 @@
-version: '3.9'
+version: "3.9"
 services:
   redis:
     container_name: redis_container
     image: redis:alpine
     restart: always
     ports:
-      - '6379:6379'
+      - "6379:6379"
     command: redis-server --loglevel warning
     volumes:
       - ./docker-volumes/cache:/data
-  
+
   mongodb:
     container_name: mongodb_container
     image: mongo:latest
@@ -18,7 +18,7 @@ services:
       - 27017:27017
     volumes:
       - ./docker-volumes/data:/data/db
-  
+
   mysql:
     container_name: mysql_container
     image: mysql
@@ -29,10 +29,10 @@ services:
       - MYSQL_ROOT_PASSWORD=api
       - MYSQL_PASSWORD=api
     ports:
-      - '3306:3306'
+      - "3306:3306"
     volumes:
       - ./docker-volumes/mysql:/var/lib/mysql
-  
+
   postgres:
     container_name: postgres_container
     image: postgres
@@ -42,10 +42,10 @@ services:
       - POSTGRES_PASSWORD=api
       - POSTGRES_DB=jobber_reviews
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - ./docker-volumes/postgres:/var/lib/postgresql
-  
+
   rabbitmq:
     container_name: rabbitmq_container
     image: rabbitmq:3.13-rc-management-alpine
@@ -54,13 +54,13 @@ services:
       - RABBITMQ_DEFAULT_USER=jobber
       - RABBITMQ_DEFAULT_PASS=jobberpass
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - elastic
 
   elasticsearch:
-  #exec elasticsearch_container: curl -s -X POST -u elastic:admin1234 -H "Content-Type: application/json" http://localhost:9200/_security/user/kibana_system/_password -d "{\"password\":\"kibana\"}"
+    #exec elasticsearch_container: curl -s -X POST -u elastic:admin1234 -H "Content-Type: application/json" http://localhost:9200/_security/user/kibana_system/_password -d "{\"password\":\"kibana\"}"
     container_name: elasticsearch_container
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
     restart: always
@@ -84,7 +84,7 @@ services:
       - ./docker-volumes/elasticsearch-data:/usr/share/elasticsearch/data
     networks:
       - elastic
-  
+
   kibana:
     container_name: kibana_container
     image: docker.elastic.co/kibana/kibana:8.11.0
@@ -99,66 +99,9 @@ services:
       - elastic
     volumes:
       - ./kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-    depends_on: 
+    depends_on:
       - elasticsearch
-
-  
-  apmServer:
-    image: docker.elastic.co/apm/apm-server:8.12.2
-    container_name: apm_server_container
-    ports:
-      - 8200:8200
-    volumes:
-      - ./apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
-    networks:
-      - elastic
-    command: >
-      apm-server -e
-        -E apm-server.rum.enabled=true
-        -E setup.kibana.host=kibana_container:5601
-        -E setup.template.settings.index.number_of_replicas=0
-        -E apm-server.kibana.enabled=true
-        -E apm-server.kibana.host=kibana_container:5601
-        -E apm-server.kibana.protocol=http
-        -E strict.perms=false
-        -E apm-server.auth.anonymous.enabled=true
-  
-  metricbeat:
-    container_name: metricbeat_container
-    image: docker.elastic.co/beats/metricbeat:8.11.0
-    user: root
-    ports:
-      - 5066:5066
-    networks:
-      - elastic
-    volumes:
-      - ./metricbeat.yml/:/usr/share/metricbeat/metricbeat.yml:ro
-      # docker module
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      # system module
-      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
-      - /proc:/hostfs/proc:ro
-      - /:/hostfs:ro
-    command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
-    depends_on: 
-      - elasticsearch
-
-  heartbeat:
-    container_name: heartbeat_container
-    image: docker.elastic.co/beats/heartbeat:8.11.0
-    user: root
-    hostname: heartbeat
-    cap_add:
-      - NET_RAW
-    networks:
-      - elastic
-    command: ["--strict.perms=false"]
-    volumes:
-      - ./heartbeat.yml:/usr/share/heartbeat/heartbeat.yml:ro
-    depends_on: 
-      - elasticsearch
-
-  notification: 
+  notification:
     container_name: notification-container
     build:
       context: ./server/notification-service
@@ -182,8 +125,27 @@ services:
       - rabbitmq
     networks:
       - elastic
-  
-  gateway: 
+  apmServer:
+    image: docker.elastic.co/apm/apm-server:8.12.2
+    container_name: apm_server_container
+    ports:
+      - 8200:8200
+    volumes:
+      - ./apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+    networks:
+      - elastic
+    command: >
+      apm-server -e
+        -E apm-server.rum.enabled=true
+        -E setup.kibana.host=kibana_container:5601
+        -E setup.template.settings.index.number_of_replicas=0
+        -E apm-server.kibana.enabled=true
+        -E apm-server.kibana.host=kibana_container:5601
+        -E apm-server.kibana.protocol=http
+        -E strict.perms=false
+        -E apm-server.auth.anonymous.enabled=true
+
+  gateway:
     container_name: gateway-container
     build:
       context: ./server/gateway-service
@@ -196,7 +158,7 @@ services:
       - ENABLE_APM=0
       - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
       - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
-      - NODE_ENV=development 
+      - NODE_ENV=development
       - SECRET_KEY_ONE=7cde664875be91b510118e0b19240293
       - SECRET_KEY_TWO=e84ca0e9b98933491c2611e5e3c1264e
       - CLIENT_URL=http://localhost:3000
@@ -216,7 +178,7 @@ services:
     networks:
       - elastic
 
-  auth: 
+  auth:
     container_name: auth-container
     build:
       context: ./server/auth-service
@@ -232,12 +194,12 @@ services:
       - NODE_ENV=development
       - CLIENT_URL=http://localhost:3000
       - API_GATEWAY_URL=http://gateway-container:4000
-      - REDIS_HOST=redis://localhost:6379
-      - MYSQL_DB=mysql://jobber:api@localhost:3306/jobber_auth
+      - REDIS_HOST=redis://redis_container:6379
+      - MYSQL_DB=mysql://jobber:api@mysql_container:3306/jobber_auth
       - CLOUD_NAME=dpdyjuznz
       - CLOUD_API_KEY=435376971633464
       - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
-      - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@localhost:5672
+      - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
       - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
       - ELASTIC_APM_SERVER_URL=http://localhost:8200
       - ELASTIC_APM_SECRET_TOKEN=
@@ -248,7 +210,7 @@ services:
     networks:
       - elastic
 
-  users: 
+  users:
     container_name: users-container
     build:
       context: ./server/users-service
@@ -264,11 +226,10 @@ services:
       - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
       - NODE_ENV=development
       - API_GATEWAY_URL=http://gateway-container:4000
-      - REDIS_HOST=redis://localhost:6379
+      - REDIS_HOST=redis://redis_container:6379
       - MYSQL_DB=mysql://jobber:api@mysql_container:3306/jobber_auth
       - CLOUD_NAME=dpdyjuznz
       - CLOUD_API_KEY=435376971633464
-      - REDIS_HOST=redis:localhost:6379
       - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
       - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
       - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
@@ -282,136 +243,133 @@ services:
     networks:
       - elastic
 
-  gig: 
-      container_name: gig-container
-      build:
-        context: ./server/gig-service
-        dockerfile: Dockerfile.dev
-      restart: always
-      ports:
-        - 4004:4004
-      env_file: ./server/gig-service/.env
-      environment:
-        - ENABLE_APM=0
-        - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
-        - DATABASE_URL=mongodb://mongodb_container/jobber-gig
-        - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
-        - NODE_ENV=development
-        - API_GATEWAY_URL=http://gateway-container:4000
-        - REDIS_HOST=redis://localhost:6379
-        - CLOUD_NAME=dpdyjuznz
-        - CLOUD_API_KEY=435376971633464
-        - REDIS_HOST=redis:localhost:6379
-        - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
-        - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
-        - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
-        - ELASTIC_APM_SERVER_URL=http://localhost:8200
-        - ELASTIC_APM_SECRET_TOKEN=
-      depends_on:
-        - elasticsearch
-        - rabbitmq
-        - mongodb
-      networks:
-        - elastic
+  gig:
+    container_name: gig-container
+    build:
+      context: ./server/gig-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4004:4004
+    env_file: ./server/gig-service/.env
+    environment:
+      - ENABLE_APM=0
+      - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
+      - DATABASE_URL=mongodb://mongodb_container/jobber-gig
+      - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
+      - NODE_ENV=development
+      - API_GATEWAY_URL=http://gateway-container:4000
+      - REDIS_HOST=redis://redis_container:6379
+      - CLOUD_NAME=dpdyjuznz
+      - CLOUD_API_KEY=435376971633464
+      - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
+      - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
+      - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
+      - ELASTIC_APM_SERVER_URL=http://localhost:8200
+      - ELASTIC_APM_SECRET_TOKEN=
+    depends_on:
+      - elasticsearch
+      - rabbitmq
+      - mongodb
+    networks:
+      - elastic
 
-  chat: 
-      container_name: chat-container
-      build:
-        context: ./server/chat-service
-        dockerfile: Dockerfile.dev
-      restart: always
-      ports:
-        - 4004:4004
-      env_file: ./server/chat-service/.env
-      environment:
-        - ENABLE_APM=0
-        - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
-        - DATABASE_URL=mongodb://mongodb_container/jobber-chat
-        - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
-        - NODE_ENV=development
-        - API_GATEWAY_URL=http://gateway-container:4000
-        - REDIS_HOST=redis://localhost:6379
-        - CLOUD_NAME=dpdyjuznz
-        - CLOUD_API_KEY=435376971633464
-        - REDIS_HOST=redis:localhost:6379
-        - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
-        - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
-        - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
-        - ELASTIC_APM_SERVER_URL=http://localhost:8200
-        - ELASTIC_APM_SECRET_TOKEN=
-      depends_on:
-        - elasticsearch
-        - rabbitmq
-        - mongodb
-      networks:
-        - elastic
+  chat:
+    container_name: chat-container
+    build:
+      context: ./server/chat-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4005:4005
+    env_file: ./server/chat-service/.env
+    environment:
+      - ENABLE_APM=0
+      - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
+      - DATABASE_URL=mongodb://mongodb_container/jobber-chat
+      - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
+      - NODE_ENV=development
+      - API_GATEWAY_URL=http://gateway-container:4000
+      - REDIS_HOST=redis://redis_container:6379
+      - CLOUD_NAME=dpdyjuznz
+      - CLOUD_API_KEY=435376971633464
+      - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
+      - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
+      - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
+      - ELASTIC_APM_SERVER_URL=http://localhost:8200
+      - ELASTIC_APM_SECRET_TOKEN=
+    depends_on:
+      - elasticsearch
+      - rabbitmq
+      - mongodb
+    networks:
+      - elastic
 
+  order:
+    container_name: order-container
+    build:
+      context: ./server/order-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4006:4006
+    env_file: ./server/order-service/.env
+    environment:
+      - ENABLE_APM=0
+      - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
+      - DATABASE_URL=mongodb://mongodb_container/jobber-order
+      - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
+      - NODE_ENV=development
+      - API_GATEWAY_URL=http://gateway-container:4000
+      - REDIS_HOST=redis://redis_container:6379
+      - STRIPE_API_KEY=sk_test_51QWByIJ7MpTaPpxjrraZ2HrWXmZGJxGgWNkWLEWwtaawz0WPbIVdwZlVqKwRjUWSehzgKxxpkmEZ1DYXwigj80qr00AACJgDE5
+      - CLOUD_NAME=dpdyjuznz
+      - CLOUD_API_KEY=435376971633464
+      - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
+      - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
+      - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
+      - ELASTIC_APM_SERVER_URL=http://localhost:8200
+      - ELASTIC_APM_SECRET_TOKEN=
+    depends_on:
+      - elasticsearch
+      - rabbitmq
+      - mongodb
+    networks:
+      - elastic
 
-  order: 
-      container_name: order-container
-      build:
-        context: ./server/order-service
-        dockerfile: Dockerfile.dev
-      restart: always
-      ports:
-        - 4004:4004
-      env_file: ./server/order-service/.env
-      environment:
-        - ENABLE_APM=0
-        - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
-        - DATABASE_URL=mongodb://mongodb_container/jobber-chat
-        - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
-        - NODE_ENV=development
-        - API_GATEWAY_URL=http://gateway-container:4000
-        - REDIS_HOST=redis://localhost:6379
-        - STRIPE_API_KEY=sk_test_51QWByIJ7MpTaPpxjrraZ2HrWXmZGJxGgWNkWLEWwtaawz0WPbIVdwZlVqKwRjUWSehzgKxxpkmEZ1DYXwigj80qr00AACJgDE5
-        - CLOUD_NAME=dpdyjuznz
-        - CLOUD_API_KEY=435376971633464
-        - REDIS_HOST=redis:localhost:6379
-        - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
-        - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
-        - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
-        - ELASTIC_APM_SERVER_URL=http://localhost:8200
-        - ELASTIC_APM_SECRET_TOKEN=
-      depends_on:
-        - elasticsearch
-        - rabbitmq
-        - mongodb
-      networks:
-        - elastic
-      
-  review: 
-      container_name: review-container
-      build:
-        context: ./server/review-service
-        dockerfile: Dockerfile.dev
-      restart: always
-      ports:
-        - 4004:4004
-      env_file: ./server/review-service/.env
-      environment:
-        - ENABLE_APM=0
-        - DATABASE_HOST=127.20.10.7
-        - DATABASE_USER=jobber
-        - DATABASE_PASSWORD=api
-        - DATABASE_NAME=jobber_reviews
-        - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
-        - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
-        - NODE_ENV=development
-        - API_GATEWAY_URL=http://localhost:4000
-        - CLIENT_URL=http://localhost:4000
-        - CLOUD_NAME=dpdyjuznz
-        - CLOUD_API_KEY=435376971633464
-        - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
-        - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@localhost:5672
-        - ELASTIC_SEARCH_URL=http://elastic:admin1234@localhost:9200
-        - ELASTIC_APM_SERVER_URL=http://localhost:8200
-        - ELASTIC_APM_SECRET_TOKEN=
-      depends_on:
-        - elasticsearch
-        - postgres
-      networks:
-        - elastic
+  review:
+    container_name: review-container
+    build:
+      context: ./server/review-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - 4007:4007
+    env_file: ./server/review-service/.env
+    environment:
+      - ENABLE_APM=0
+      - DATABASE_HOST=postgres_container
+      - DATABASE_USER=jobber
+      - DATABASE_PASSWORD=api
+      - DATABASE_NAME=jobber_reviews
+      - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
+      - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
+      - NODE_ENV=development
+      - API_GATEWAY_URL=http://localhost:4000
+      - CLIENT_URL=http://localhost:4000
+      - CLOUD_NAME=dpdyjuznz
+      - CLOUD_API_KEY=435376971633464
+      - CLOUD_API_SECRET=dmpFFfnEJt6HzWfjcglt23sk6eo
+      - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@localhost:5672
+      - ELASTIC_SEARCH_URL=http://elastic:admin1234@localhost:9200
+      - ELASTIC_APM_SERVER_URL=http://localhost:8200
+      - ELASTIC_APM_SECRET_TOKEN=
+    depends_on:
+      - elasticsearch
+      - postgres
+    networks:
+      - elastic
+
 networks:
   elastic:
     name: elastic

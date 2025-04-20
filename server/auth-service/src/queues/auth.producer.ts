@@ -1,8 +1,8 @@
 import { config } from "@auth/config";
 import { Logger } from "winston";
 import {
-  firstLetterUppercase,
-  IAuthDocument,
+  // firstLetterUppercase,
+  // IAuthDocument,
   winstonLogger,
 } from "jobber-shared-for-hkhanq";
 import { Channel } from "amqplib";
@@ -18,8 +18,8 @@ export async function publishDirecMessage(
   channel: Channel,
   exchangeName: string,
   routingKey: string,
-  message: string,
-  logMessage: string
+  message: string
+  // logMessage: string
 ): Promise<void> {
   try {
     if (!channel) {
