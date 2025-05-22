@@ -1,22 +1,22 @@
-import { FC, ReactElement } from 'react'
-import { Link, NavigateFunction, useNavigate } from 'react-router-dom'
-import { applicationLogout, lowerCase } from 'src/shared/utils/utils.service'
-import { useAppDispatch } from 'src/store/store'
+import { FC, ReactElement } from 'react';
+import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
+import { applicationLogout, lowerCase } from 'src/shared/utils/utils.service';
+import { useAppDispatch } from 'src/store/store';
 
-import { IHomeHeaderProps } from '../interfaces/header.interface'
-import { updateCategoryContainer } from '../reducers/category.reducer'
-import { updateHeader } from '../reducers/header.reducer'
+import { IHomeHeaderProps } from '../interfaces/header.interface';
+import { updateCategoryContainer } from '../reducers/category.reducer';
+import { updateHeader } from '../reducers/header.reducer';
 
 const SettingsDropdown: FC<IHomeHeaderProps> = ({ seller, authUser, buyer, type, setIsDropdownOpen }): ReactElement => {
-  const navigate: NavigateFunction = useNavigate()
-  const dispatch = useAppDispatch()
+  const navigate: NavigateFunction = useNavigate();
+  const dispatch = useAppDispatch();
 
   const onLogout = (): void => {
     if (setIsDropdownOpen) {
-      setIsDropdownOpen(false)
+      setIsDropdownOpen(false);
     }
-    applicationLogout(dispatch, navigate)
-  }
+    applicationLogout(dispatch, navigate);
+  };
 
   return (
     <div className="border-grey w-44 divide-y divide-gray-100 rounded border bg-white shadow-md">
@@ -27,10 +27,10 @@ const SettingsDropdown: FC<IHomeHeaderProps> = ({ seller, authUser, buyer, type,
               to={`${type === 'buyer' ? `/${lowerCase(`${authUser?.username}`)}/${seller?._id}/seller_dashboard` : '/'}`}
               onClick={() => {
                 if (setIsDropdownOpen) {
-                  setIsDropdownOpen(false)
+                  setIsDropdownOpen(false);
                 }
-                dispatch(updateHeader('sellerDashboard'))
-                dispatch(updateCategoryContainer(true))
+                dispatch(updateHeader('sellerDashboard'));
+                dispatch(updateCategoryContainer(true));
               }}
               className="block w-full cursor-pointer rounded bg-sky-500 px-4s py-2 text-center font-bold text-white hover:bg-sky-400 focus:outline-none"
             >
@@ -45,10 +45,10 @@ const SettingsDropdown: FC<IHomeHeaderProps> = ({ seller, authUser, buyer, type,
               className="block px-4 py-2 hover:text-sky-400"
               onClick={() => {
                 if (setIsDropdownOpen) {
-                  setIsDropdownOpen(false)
+                  setIsDropdownOpen(false);
                 }
-                dispatch(updateHeader('home'))
-                dispatch(updateCategoryContainer(true))
+                dispatch(updateHeader('home'));
+                dispatch(updateCategoryContainer(true));
               }}
             >
               Add a new gig
@@ -62,10 +62,10 @@ const SettingsDropdown: FC<IHomeHeaderProps> = ({ seller, authUser, buyer, type,
               className="block px-4 py-2 hover:text-sky-400"
               onClick={() => {
                 if (setIsDropdownOpen) {
-                  setIsDropdownOpen(false)
+                  setIsDropdownOpen(false);
                 }
-                dispatch(updateHeader('home'))
-                dispatch(updateCategoryContainer(true))
+                dispatch(updateHeader('home'));
+                dispatch(updateCategoryContainer(true));
               }}
             >
               Dashboard
@@ -79,10 +79,10 @@ const SettingsDropdown: FC<IHomeHeaderProps> = ({ seller, authUser, buyer, type,
               className="block px-4 py-2 hover:text-sky-400"
               onClick={() => {
                 if (setIsDropdownOpen) {
-                  setIsDropdownOpen(false)
+                  setIsDropdownOpen(false);
                 }
-                dispatch(updateHeader('home'))
-                dispatch(updateCategoryContainer(true))
+                dispatch(updateHeader('home'));
+                dispatch(updateCategoryContainer(true));
               }}
             >
               Profile
@@ -91,14 +91,14 @@ const SettingsDropdown: FC<IHomeHeaderProps> = ({ seller, authUser, buyer, type,
         )}
         <li>
           <Link
-            to={`${lowerCase(`${buyer?.username}/edit`)}`}
+            to={`/${lowerCase(buyer?.username || 'undefined')}/edit`}
             className="block px-4 py-2 hover:text-sky-400"
             onClick={() => {
               if (setIsDropdownOpen) {
-                setIsDropdownOpen(false)
+                setIsDropdownOpen(false);
               }
-              dispatch(updateHeader('home'))
-              dispatch(updateCategoryContainer(false))
+              dispatch(updateHeader('home'));
+              dispatch(updateCategoryContainer(false));
             }}
           >
             Settings
@@ -111,7 +111,7 @@ const SettingsDropdown: FC<IHomeHeaderProps> = ({ seller, authUser, buyer, type,
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SettingsDropdown
+export default SettingsDropdown;

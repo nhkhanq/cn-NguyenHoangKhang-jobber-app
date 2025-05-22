@@ -1,16 +1,16 @@
-import { FC, ReactElement, useEffect } from 'react'
-import { BrowserRouter } from 'react-router-dom'
-import { ToastContainer } from 'react-toastify'
+import { FC, ReactElement, useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import useBeforeWindowUnload from './shared/hooks/useBeforeWindowUnload';
-import AppRouter from './AppRouter'
-import { socketService } from './sockets/socket.service'
+import AppRouter from './AppRouter';
+import { socketService } from './sockets/socket.service';
 
 const App: FC = (): ReactElement => {
-  useBeforeWindowUnload()
+  useBeforeWindowUnload();
 
   useEffect(() => {
-    socketService.setupSocketConnection()
-  }, [])
+    socketService.setupSocketConnection();
+  }, []);
 
   return (
     <>
@@ -21,7 +21,7 @@ const App: FC = (): ReactElement => {
         </div>
       </BrowserRouter>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

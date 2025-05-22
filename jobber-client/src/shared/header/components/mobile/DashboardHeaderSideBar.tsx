@@ -1,29 +1,29 @@
-import { FC, MouseEvent, ReactElement } from 'react'
-import { Link, NavigateFunction, useNavigate } from 'react-router-dom'
-import { applicationLogout, lowerCase } from 'src/shared/utils/utils.service'
-import { useAppDispatch, useAppSelector } from 'src/store/store'
-import { IReduxState } from 'src/store/store.interface'
+import { FC, MouseEvent, ReactElement } from 'react';
+import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
+import { applicationLogout, lowerCase } from 'src/shared/utils/utils.service';
+import { useAppDispatch, useAppSelector } from 'src/store/store';
+import { IReduxState } from 'src/store/store.interface';
 
-import { IHeaderSideBarProps } from '../../interfaces/header.interface'
-import { updateCategoryContainer } from '../../reducers/category.reducer'
-import { updateHeader } from '../../reducers/header.reducer'
+import { IHeaderSideBarProps } from '../../interfaces/header.interface';
+import { updateCategoryContainer } from '../../reducers/category.reducer';
+import { updateHeader } from '../../reducers/header.reducer';
 
 const DashboardHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactElement => {
-  const authUser = useAppSelector((state: IReduxState) => state.authUser)
-  const seller = useAppSelector((state: IReduxState) => state.seller)
-  const dispatch = useAppDispatch()
-  const navigate: NavigateFunction = useNavigate()
+  const authUser = useAppSelector((state: IReduxState) => state.authUser);
+  const seller = useAppSelector((state: IReduxState) => state.seller);
+  const dispatch = useAppDispatch();
+  const navigate: NavigateFunction = useNavigate();
 
   const onLogout = async () => {
-    applicationLogout(dispatch, navigate)
-  }
+    applicationLogout(dispatch, navigate);
+  };
 
   return (
     <div
       className={'fixed left-0 top-0 z-[150] flex h-screen w-full bg-black/40 transition-all duration-500'}
       onClick={() => {
         if (setOpenSidebar) {
-          setOpenSidebar(false)
+          setOpenSidebar(false);
         }
       }}
     >
@@ -36,9 +36,9 @@ const DashboardHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): Re
           <div
             onClick={() => {
               if (setOpenSidebar) {
-                setOpenSidebar(false)
-                dispatch(updateHeader('sellerDashboard'))
-                dispatch(updateCategoryContainer(true))
+                setOpenSidebar(false);
+                dispatch(updateHeader('sellerDashboard'));
+                dispatch(updateCategoryContainer(true));
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
@@ -47,9 +47,9 @@ const DashboardHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): Re
           </div>
           <div
             onClick={(event: MouseEvent) => {
-              event.stopPropagation()
+              event.stopPropagation();
               if (setOpenSidebar) {
-                setOpenSidebar(false)
+                setOpenSidebar(false);
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
@@ -58,9 +58,9 @@ const DashboardHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): Re
           </div>
           <div
             onClick={(event: MouseEvent) => {
-              event.stopPropagation()
+              event.stopPropagation();
               if (setOpenSidebar) {
-                setOpenSidebar(false)
+                setOpenSidebar(false);
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
@@ -69,11 +69,11 @@ const DashboardHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): Re
           </div>
           <div
             onClick={(event: MouseEvent) => {
-              event.stopPropagation()
+              event.stopPropagation();
               if (setOpenSidebar) {
-                setOpenSidebar(false)
-                dispatch(updateHeader('home'))
-                dispatch(updateCategoryContainer(true))
+                setOpenSidebar(false);
+                dispatch(updateHeader('home'));
+                dispatch(updateCategoryContainer(true));
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
@@ -82,23 +82,23 @@ const DashboardHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): Re
           </div>
           <div
             onClick={(event: MouseEvent) => {
-              event.stopPropagation()
+              event.stopPropagation();
               if (setOpenSidebar) {
-                setOpenSidebar(false)
-                dispatch(updateHeader('home'))
-                dispatch(updateCategoryContainer(true))
+                setOpenSidebar(false);
+                dispatch(updateHeader('home'));
+                dispatch(updateCategoryContainer(true));
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
           >
-            <Link to={`/${lowerCase(`${seller?.username}`)}/edit`}>Settings</Link>
+            <Link to={`/${lowerCase(seller?.username || 'undefined')}/edit`}>Settings</Link>
           </div>
           <div
             onClick={(event: MouseEvent) => {
-              event.stopPropagation()
+              event.stopPropagation();
               if (setOpenSidebar) {
-                setOpenSidebar(false)
-                onLogout()
+                setOpenSidebar(false);
+                onLogout();
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
@@ -108,7 +108,7 @@ const DashboardHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): Re
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DashboardHeaderSideBar
+export default DashboardHeaderSideBar;

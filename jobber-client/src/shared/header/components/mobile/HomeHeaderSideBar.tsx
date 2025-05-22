@@ -1,53 +1,53 @@
-import { Transition } from '@headlessui/react'
-import { FC, MouseEvent, ReactElement, useState } from 'react'
-import { FaAngleDown, FaAngleRight, FaAngleUp } from 'react-icons/fa'
-import { Link, NavigateFunction, useNavigate } from 'react-router-dom'
-import { applicationLogout, categories, lowerCase, replaceSpacesWithDash } from 'src/shared/utils/utils.service'
-import { socket } from 'src/sockets/socket.service'
-import { useAppDispatch, useAppSelector } from 'src/store/store'
-import { IReduxState } from 'src/store/store.interface'
-import { v4 as uuidv4 } from 'uuid'
+import { Transition } from '@headlessui/react';
+import { FC, MouseEvent, ReactElement, useState } from 'react';
+import { FaAngleDown, FaAngleRight, FaAngleUp } from 'react-icons/fa';
+import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
+import { applicationLogout, categories, lowerCase, replaceSpacesWithDash } from 'src/shared/utils/utils.service';
+import { socket } from 'src/sockets/socket.service';
+import { useAppDispatch, useAppSelector } from 'src/store/store';
+import { IReduxState } from 'src/store/store.interface';
+import { v4 as uuidv4 } from 'uuid';
 
-import { IHeaderSideBarProps, ISettings } from '../../interfaces/header.interface'
-import { updateCategoryContainer } from '../../reducers/category.reducer'
-import { updateHeader } from '../../reducers/header.reducer'
+import { IHeaderSideBarProps, ISettings } from '../../interfaces/header.interface';
+import { updateCategoryContainer } from '../../reducers/category.reducer';
+import { updateHeader } from '../../reducers/header.reducer';
 
 const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactElement => {
-  const authUser = useAppSelector((state: IReduxState) => state.authUser)
-  const seller = useAppSelector((state: IReduxState) => state.seller)
-  const buyer = useAppSelector((state: IReduxState) => state.buyer)
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
-  const [toggleCategories, setToggleCategories] = useState<boolean>(false)
-  const dispatch = useAppDispatch()
-  const navigate: NavigateFunction = useNavigate()
-  const isSeller: boolean = (buyer && buyer.isSeller) as boolean
+  const authUser = useAppSelector((state: IReduxState) => state.authUser);
+  const seller = useAppSelector((state: IReduxState) => state.seller);
+  const buyer = useAppSelector((state: IReduxState) => state.buyer);
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [toggleCategories, setToggleCategories] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const navigate: NavigateFunction = useNavigate();
+  const isSeller: boolean = (buyer && buyer.isSeller) as boolean;
   const settings: ISettings[] = [
     { id: 1, name: 'Add a new gig', url: `/manage_gigs/new/${seller?._id}`, show: isSeller },
     { id: 2, name: 'Dashboard', url: `/users/${buyer?.username}/${buyer?._id}/orders`, show: true },
-    { id: 3, name: 'Profile', url: `/seller_profile/${lowerCase(`${seller?.username}`)}/${seller?._id}/edit`, show: isSeller },
-    { id: 4, name: 'Settings', url: `/${lowerCase(`${seller?.username}`)}/edit`, show: true }
-  ]
+    { id: 3, name: 'Profile', url: `/seller_profile/${lowerCase(seller?.username || '')}/${seller?._id}/edit`, show: isSeller },
+    { id: 4, name: 'Settings', url: `/${lowerCase(seller?.username || 'undefined')}/edit`, show: true }
+  ];
 
   const toggleDropdown = (event: MouseEvent): void => {
-    event.stopPropagation()
-    setIsDropdownOpen(!isDropdownOpen)
-  }
+    event.stopPropagation();
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
   const toggleCategoriesDropdown = (event: MouseEvent): void => {
-    event.stopPropagation()
-    setToggleCategories(!toggleCategories)
-  }
+    event.stopPropagation();
+    setToggleCategories(!toggleCategories);
+  };
 
   const onLogout = (): void => {
-    applicationLogout(dispatch, navigate)
-  }
+    applicationLogout(dispatch, navigate);
+  };
 
   return (
     <div
       className={'fixed left-0 top-0 z-[150] flex h-screen w-full bg-black/40 transition-all duration-500'}
       onClick={() => {
         if (setOpenSidebar) {
-          setOpenSidebar(false)
+          setOpenSidebar(false);
         }
       }}
     >
@@ -60,9 +60,9 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
           <div
             onClick={() => {
               if (setOpenSidebar) {
-                setOpenSidebar(false)
-                dispatch(updateHeader('home'))
-                dispatch(updateCategoryContainer(true))
+                setOpenSidebar(false);
+                dispatch(updateHeader('home'));
+                dispatch(updateCategoryContainer(true));
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
@@ -71,9 +71,9 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
           </div>
           <div
             onClick={(event: MouseEvent) => {
-              event.stopPropagation()
+              event.stopPropagation();
               if (setOpenSidebar) {
-                setOpenSidebar(false)
+                setOpenSidebar(false);
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
@@ -82,9 +82,9 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
           </div>
           <div
             onClick={(event: MouseEvent) => {
-              event.stopPropagation()
+              event.stopPropagation();
               if (setOpenSidebar) {
-                setOpenSidebar(false)
+                setOpenSidebar(false);
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
@@ -94,11 +94,11 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
           {!isSeller && (
             <div
               onClick={(event: MouseEvent) => {
-                event.stopPropagation()
+                event.stopPropagation();
                 if (setOpenSidebar) {
-                  setOpenSidebar(false)
-                  dispatch(updateHeader('home'))
-                  dispatch(updateCategoryContainer(true))
+                  setOpenSidebar(false);
+                  dispatch(updateHeader('home'));
+                  dispatch(updateCategoryContainer(true));
                 }
               }}
               className="cursor-pointer text-base font-medium text-gray-400"
@@ -109,11 +109,11 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
           {isSeller && (
             <div
               onClick={(event: MouseEvent) => {
-                event.stopPropagation()
+                event.stopPropagation();
                 if (setOpenSidebar) {
-                  setOpenSidebar(false)
-                  dispatch(updateHeader('sellerDashboard'))
-                  dispatch(updateCategoryContainer(true))
+                  setOpenSidebar(false);
+                  dispatch(updateHeader('sellerDashboard'));
+                  dispatch(updateCategoryContainer(true));
                 }
               }}
               className="cursor-pointer text-base font-medium text-gray-400"
@@ -145,9 +145,9 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
                       className="flex cursor-pointer justify-between py-2 text-right hover:text-sky-400"
                       onClick={() => {
                         if (setOpenSidebar) {
-                          setOpenSidebar(false)
-                          dispatch(updateHeader('home'))
-                          dispatch(updateCategoryContainer(true))
+                          setOpenSidebar(false);
+                          dispatch(updateHeader('home'));
+                          dispatch(updateCategoryContainer(true));
                         }
                       }}
                     >
@@ -155,7 +155,7 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
                         <Link
                           to={`/categories/${replaceSpacesWithDash(category)}`}
                           onClick={() => {
-                            socket.emit('getLoggedInUsers', '')
+                            socket.emit('getLoggedInUsers', '');
                           }}
                         >
                           {category}
@@ -192,7 +192,7 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
                             to={`${setting.url}`}
                             className="flex justify-between text-right"
                             onClick={() => {
-                              dispatch(updateCategoryContainer(setting.name !== 'Settings'))
+                              dispatch(updateCategoryContainer(setting.name !== 'Settings'));
                             }}
                           >
                             <span className="w-full pr-6">{setting.name}</span> <FaAngleRight className="flex self-center" />
@@ -207,10 +207,10 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
           </div>
           <div
             onClick={(event: MouseEvent) => {
-              event.stopPropagation()
+              event.stopPropagation();
               if (setOpenSidebar) {
-                setOpenSidebar(false)
-                onLogout()
+                setOpenSidebar(false);
+                onLogout();
               }
             }}
             className="cursor-pointer text-base font-medium text-gray-400"
@@ -220,7 +220,7 @@ const HomeHeaderSideBar: FC<IHeaderSideBarProps> = ({ setOpenSidebar }): ReactEl
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomeHeaderSideBar
+export default HomeHeaderSideBar;
