@@ -105,6 +105,7 @@ export async function resetPassword(
   );
   res.status(StatusCodes.OK).json({ message: "Password reset success" });
 }
+
 export async function changePassword(
   req: Request,
   res: Response
@@ -146,7 +147,6 @@ export async function changePassword(
     "jobber-email-notification",
     "auth-email",
     JSON.stringify(messageDetails)
-    // "Change password message send to notification service"
   );
   res.status(StatusCodes.OK).json({ message: "Password reset success" });
 }

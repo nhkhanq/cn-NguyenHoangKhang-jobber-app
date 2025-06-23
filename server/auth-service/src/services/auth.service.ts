@@ -166,7 +166,7 @@ export async function updateVerifyEmailField(
 ): Promise<void> {
   try {
     await AuthModel.update(
-      !emailVerificationToken
+      emailVerificationToken === undefined
         ? {
             emailVerified,
           }

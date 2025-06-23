@@ -5,16 +5,68 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jobber</title>
+    <!-- ChatBot CSS Fixes -->
+    <link rel="stylesheet" href="/src/styles/chatbot-fix.css" />
   </head>
   <body>
+    <div id="root"></div>
+    
+    <!-- JobBot Integration with CSS Fixes -->
     <script type="module">
-      import Chatbot from 'https://cdn.jsdelivr.net/npm/@denserai/embed-chat@1/dist/web.min.js';
-      Chatbot.init({
-        chatbotId: 'ff951521-0581-4aa3-b32e-9d007218f964',
+      // Wait for DOM to be fully loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        
+        // Function to apply CSS fixes after JobBot loads
+        function applyCSSFixes() {
+          setTimeout(() => {
+            // Find all potential JobBot elements
+            const chatbotElements = document.querySelectorAll(
+              '[data-chatbot-id], .denserai-chatbot, .chatbot-container, iframe[src*="denserai"], div[class*="chatbot"]'
+            );
+            
+            chatbotElements.forEach(element => {
+              // Force remove any pseudo elements content
+              const style = document.createElement('style');
+              style.textContent = `
+                ${element.tagName}${element.className ? '.' + element.className.split(' ').join('.') : ''}::before,
+                ${element.tagName}${element.className ? '.' + element.className.split(' ').join('.') : ''}::after {
+                  content: "" !important;
+                  display: none !important;
+                }
+              `;
+              document.head.appendChild(style);
+            });
+          }, 1000);
+        }
+        
+        // Import and initialize JobBot
+        import('https://cdn.jsdelivr.net/npm/@denserai/embed-chat@1/dist/web.min.js')
+          .then(({ default: Chatbot }) => {
+            Chatbot.init({
+              chatbotId: 'ff951521-0581-4aa3-b32e-9d007218f964',
+              // Custom configuration to prevent conflicts
+              container: document.body,
+              position: 'bottom-right',
+              theme: {
+                primaryColor: '#007bff',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontSize: '14px',
+                borderRadius: '12px'
+              },
+              // Prevent CSS conflicts
+              isolation: true,
+              preventDefaultStyles: false
+            });
+            
+            // Apply CSS fixes after initialization
+            applyCSSFixes();
+          })
+          .catch(error => {
+            console.warn('JobBot failed to load:', error);
+          });
       });
     </script>
-
-    <div id="root"></div>
+    
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
