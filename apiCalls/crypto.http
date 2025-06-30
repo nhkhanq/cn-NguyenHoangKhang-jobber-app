@@ -1,0 +1,135 @@
+@baseUrl = http://localhost:4000
+@urlPath = api/gateway/v1/crypto
+
+### Variables for testing
+@testBuyerAddress = 0x742d35cc6634c0532925a3b8d76f4e21c0532925
+@testSellerAddress = 0x8ba1f109551bD432803012645Hac136c123456789
+@testOrderId = crypto_order_test_123
+@testJobberOrderId = 60d5ecb54e0ff2001c8b4567
+
+###
+# STEP 1: Sign in first (required for authentication)
+POST {{baseUrl}}/api/gateway/v1/auth/signin
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "username": "Heshe",
+  "password": "123456"
+}
+
+###
+# TEST 1: Get supported tokens (Important - Shows crypto service is connected)
+GET {{baseUrl}}/{{urlPath}}/tokens
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+###
+# TEST 2: Check wallet balance 
+GET {{baseUrl}}/{{urlPath}}/balance/{{testBuyerAddress}}/1
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+###
+# TEST 3: Create crypto order (Most important test)
+POST {{baseUrl}}/{{urlPath}}/orders
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "jobberOrderId": "{{testJobberOrderId}}",
+  "buyerAddress": "{{testBuyerAddress}}",
+  "sellerAddress": "{{testSellerAddress}}",
+  "tokenAddress": "0x0000000000000000000000000000000000000000",
+  "tokenSymbol": "ETH",
+  "amount": "0.1",
+  "chainId": 1,
+  "gigTitle": "Test Website Development",
+  "description": "Testing crypto payment integration"
+}
+
+###
+# TEST 4: Get crypto order by ID
+GET {{baseUrl}}/{{urlPath}}/orders/{{testOrderId}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+###
+# TEST 5: Get crypto orders by Jobber order ID
+GET {{baseUrl}}/{{urlPath}}/orders/jobber/{{testJobberOrderId}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+###
+# TEST 6: Get buyer's crypto orders
+GET {{baseUrl}}/{{urlPath}}/orders/buyer/{{testBuyerAddress}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+###
+# TEST 7: Get seller's crypto orders
+GET {{baseUrl}}/{{urlPath}}/orders/seller/{{testSellerAddress}}
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+###
+# TEST 8: Confirm payment (after blockchain transaction)
+PUT {{baseUrl}}/{{urlPath}}/orders/{{testOrderId}}/confirm-payment
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "transactionHash": "0xa1b2c3d4e5f6789012345678901234567890abcdef",
+  "blockNumber": 18756432
+}
+
+###
+# TEST 9: Mark order as delivered
+PUT {{baseUrl}}/{{urlPath}}/orders/{{testOrderId}}/delivered
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "deliveryNote": "Crypto payment test - project completed",
+  "deliveryFiles": ["test-file.zip"]
+}
+
+###
+# TEST 10: Complete order
+PUT {{baseUrl}}/{{urlPath}}/orders/{{testOrderId}}/complete
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+###
+# TEST 11: Cancel order
+PUT {{baseUrl}}/{{urlPath}}/orders/{{testOrderId}}/cancel
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "reason": "Testing cancellation flow"
+}
+
+###
+# TEST 12: Raise dispute
+PUT {{baseUrl}}/{{urlPath}}/orders/{{testOrderId}}/dispute
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "reason": "Testing dispute mechanism",
+  "evidence": "This is a test dispute for integration testing"
+} 

@@ -3,6 +3,7 @@ import { markSingleNotificationAsRead } from '@order/controllers/notification/up
 import { intent, order } from '@order/controllers/order/create'
 import { buyerOrders, orderId, sellerOrders } from '@order/controllers/order/get'
 import { buyerApproveOrder, cancel, deliverOrder, deliveryDate, requestExtension } from '@order/controllers/order/update'
+import { createCryptoOrder, confirmCryptoPayment, deliverCryptoOrder, completeCryptoOrder, cancelCryptoOrder } from '@order/controllers/order/crypto'
 import express, { Router } from 'express'
 
 const router: Router = express.Router()
@@ -20,6 +21,12 @@ const orderRoutes = (): Router => {
   router.put('/approve-order/:orderId', buyerApproveOrder)
   router.put('/gig/:type/:orderId', deliveryDate)
   router.put('/notification/mark-as-read', markSingleNotificationAsRead)
+
+  router.post('/crypto', createCryptoOrder)
+  router.put('/crypto/:orderId/confirm-payment', confirmCryptoPayment)
+  router.put('/crypto/:orderId/delivered', deliverCryptoOrder)
+  router.put('/crypto/:orderId/complete', completeCryptoOrder)
+  router.put('/crypto/:orderId/cancel', cancelCryptoOrder)
 
   return router
 }

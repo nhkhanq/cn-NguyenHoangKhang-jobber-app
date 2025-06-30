@@ -16,6 +16,7 @@ class Config {
    public CLOUD_API_SECRET: string | undefined
    public RABBITMQ_ENDPOINT: string | undefined
    public ELASTIC_SEARCH_URL: string | undefined
+   public CRYPTO_PAYMENT_BASE_URL: string | undefined
 
   constructor() {
     this.GATEWAY_JWT_TOKEN = process.env.GATEWAY_JWT_TOKEN || undefined
@@ -29,7 +30,8 @@ class Config {
     this.CLOUD_API_KEY = process.env.CLOUD_API_KEY || undefined
     this.CLOUD_API_SECRET = process.env.CLOUD_API_SECRET || undefined
     this.RABBITMQ_ENDPOINT = process.env.RABBITMQ_ENDPOINT || undefined
-    this.ELASTIC_SEARCH_URL = process.env.ELASTIC_SEARCH_URL || undefined 
+    this.ELASTIC_SEARCH_URL = process.env.ELASTIC_SEARCH_URL || undefined
+    this.CRYPTO_PAYMENT_BASE_URL = process.env.CRYPTO_PAYMENT_BASE_URL || undefined
   }
 
   public cloudinaryConfig(): void {

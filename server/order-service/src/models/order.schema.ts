@@ -38,6 +38,26 @@ const orderSchema: Schema = new Schema(
     cancelled: { type: Boolean, default: false },
     approvedAt: { type: Date },
     paymentIntent: { type: String },
+    paymentType: { 
+      type: String, 
+      enum: ['stripe', 'crypto'], 
+      default: 'stripe' 
+    },
+    cryptoPayment: {
+      cryptoOrderId: { type: String },
+      tokenAddress: { type: String },
+      tokenSymbol: { type: String },
+      buyerWallet: { type: String },
+      sellerWallet: { type: String },
+      chainId: { type: Number },
+      transactionHash: { type: String },
+      blockNumber: { type: Number },
+      status: { 
+        type: String, 
+        enum: ['pending', 'confirmed', 'completed', 'failed'],
+        default: 'pending'
+      }
+    },
     deliveredWork: [
       {
         message: { type: String },

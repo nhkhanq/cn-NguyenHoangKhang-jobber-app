@@ -202,7 +202,7 @@ class BlockchainService {
         return {
           success: true,
           transactionHash: tx.hash,
-          message: 'Native token payment processed successfully'
+          message: 'Native token payment successful'
         };
       } else {
         const tokenInfo = this.getTokenInfoByAddress(chainId, tokenAddress);
@@ -220,14 +220,14 @@ class BlockchainService {
         return {
           success: true,
           transactionHash: tx.hash,
-          message: 'Token payment processed successfully'
+          message: 'Token payment successful'
         };
       }
     } catch (error) {
       console.error('Error processing payment:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Payment processing failed'
+        error: error instanceof Error ? error.message : 'Payment failed'
       };
     }
   }
@@ -235,14 +235,14 @@ class BlockchainService {
   public async getTransactionDetails(txHash: string, chainId: number): Promise<any> {
     try {
       const provider = this.getProvider(chainId);
-      const tx = await provider.getTransaction(txHash);
+      const transaction = await provider.getTransaction(txHash);
       const receipt = await provider.getTransactionReceipt(txHash);
 
       return {
-        transaction: tx,
-        receipt: receipt,
-        confirmations: receipt ? receipt.confirmations : 0,
-        status: receipt ? receipt.status : null
+        transaction,
+        receipt,
+        status: receipt.status === 1 ? 'success' : 'failed',
+        confirmations: receipt.confirmations
       };
     } catch (error) {
       console.error('Error getting transaction details:', error);
@@ -251,18 +251,18 @@ class BlockchainService {
   }
 
   public async convertToUSD(amount: string, tokenSymbol: string, chainId: number): Promise<number> {
-    // Mock implementation - in production, integrate with price APIs
-    const mockPrices: { [key: string]: number } = {
+    // This would typically call a price oracle or API
+    // For now, returning a mock conversion rate
+    const mockRates: { [key: string]: number } = {
       'ETH': 2000,
-      'USDC': 1,
       'USDT': 1,
-      'MATIC': 0.8,
-      'BNB': 300
+      'USDC': 1,
+      'BNB': 300,
+      'MATIC': 0.8
     };
-
-    const price = mockPrices[tokenSymbol] || 0;
-    const amountFloat = parseFloat(amount);
-    return amountFloat * price;
+    
+    const rate = mockRates[tokenSymbol] || 1;
+    return parseFloat(amount) * rate;
   }
 
   public async isTransactionConfirmed(txHash: string, chainId: number, requiredConfirmations: number = 12): Promise<boolean> {

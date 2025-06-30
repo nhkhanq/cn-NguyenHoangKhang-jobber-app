@@ -52,20 +52,20 @@ class Application {
   private async connectToDatabase(): Promise<void> {
     try {
       await mongoose.connect(config.DATABASE_URL!);
-      console.log('✅ Connected to MongoDB successfully');
+      console.log('Connected to MongoDB successfully');
     } catch (error) {
-      console.error('❌ MongoDB connection failed:', error);
+      console.error('MongoDB connection failed:', error);
       process.exit(1);
     }
   }
 
   public start(): void {
-    const PORT = config.PORT || 4012;
+    const PORT = config.PORT || 4008;
     
     this.app.listen(PORT, () => {
-      console.log(`🚀 Crypto Payment Service running on port ${PORT}`);
-      console.log(`🌍 Environment: ${config.NODE_ENV}`);
-      console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+      console.log(`Crypto Payment Service running on port ${PORT}`);
+      console.log(`Environment: ${config.NODE_ENV}`);
+      console.log(`Health check: http://localhost:${PORT}/health`);
     });
   }
 
