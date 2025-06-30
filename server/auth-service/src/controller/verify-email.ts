@@ -10,13 +10,11 @@ export async function update(req: Request, res: Response): Promise<void> {
       throw new BadRequestError('Verification token is either invalid or is already used.', 'VerifyEmail update() method error')
     }
     
-    // Check if user is already verified
     if (checkIfUserExist.emailVerified) {
       throw new BadRequestError('Email is already verified.', 'VerifyEmail update() method error')
     }
     
-    // Update verified status and clear the verification token
-    await updateVerifyEmailField(checkIfUserExist.id!, 1, "")
+    await updateVerifyEmailField(checkIfUserExist.id!, 1, undefined)
     const updatedUser = await getAuthUserById(checkIfUserExist.id!)
     res.status(StatusCodes.OK).json({ message: 'Email verified successfully.', user: updatedUser })
   }
