@@ -12,18 +12,14 @@ class Config {
   public API_GATEWAY_URL: string | undefined;
   public RABBITMQ_ENDPOINT: string | undefined;
   
-  // Blockchain configuration
+  // Blockchain configuration - ETH only
   public ETHEREUM_RPC_URL: string | undefined;
-  public POLYGON_RPC_URL: string | undefined;
-  public BSC_RPC_URL: string | undefined;
   public SEPOLIA_RPC_URL: string | undefined;
+  public LOCAL_RPC_URL: string | undefined;
   public PRIVATE_KEY: string | undefined;
   
   // Contract addresses
   public ESCROW_CONTRACT_ADDRESS: string | undefined;
-  
-  // Supported tokens configuration
-  public SUPPORTED_TOKENS: string | undefined;
   
   // Settings
   public AUTO_RELEASE_DELAY: string | undefined;
@@ -32,7 +28,7 @@ class Config {
 
   constructor() {
     this.NODE_ENV = process.env.NODE_ENV || 'development';
-    this.PORT = process.env.PORT || '4012';
+    this.PORT = process.env.PORT || '4008';
     this.CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
     this.DATABASE_URL = process.env.DATABASE_URL || 'mongodb://localhost:27017/jobber-crypto';
     this.JWT_TOKEN = process.env.JWT_TOKEN || 'crypto-payment-secret';
@@ -40,35 +36,14 @@ class Config {
     this.API_GATEWAY_URL = process.env.API_GATEWAY_URL || 'http://localhost:4000';
     this.RABBITMQ_ENDPOINT = process.env.RABBITMQ_ENDPOINT || 'amqp://localhost:5672';
     
-    // Blockchain configuration
-    this.ETHEREUM_RPC_URL = process.env.ETHEREUM_RPC_URL || 'https://mainnet.infura.io/v3/YOUR_KEY';
-    this.POLYGON_RPC_URL = process.env.POLYGON_RPC_URL || 'https://polygon-rpc.com';
-    this.BSC_RPC_URL = process.env.BSC_RPC_URL || 'https://bsc-dataseed.binance.org';
-    this.SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || 'https://sepolia.infura.io/v3/YOUR_KEY';
-    this.PRIVATE_KEY = process.env.PRIVATE_KEY || '';
+    // Blockchain configuration - ETH only
+    this.ETHEREUM_RPC_URL = process.env.ETHEREUM_RPC_URL || '';
+    this.SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || 'https://sepolia.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
+    this.LOCAL_RPC_URL = process.env.LOCAL_RPC_URL || 'http://127.0.0.1:8545';
+    this.PRIVATE_KEY = process.env.PRIVATE_KEY || '0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a';
     
-    // Contract addresses
-    this.ESCROW_CONTRACT_ADDRESS = process.env.ESCROW_CONTRACT_ADDRESS || '';
-    
-    // Token configuration
-    this.SUPPORTED_TOKENS = process.env.SUPPORTED_TOKENS || JSON.stringify({
-      ethereum: {
-        chainId: 1,
-        tokens: {
-          ETH: { address: '0x0000000000000000000000000000000000000000', decimals: 18 },
-          USDT: { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 },
-          USDC: { address: '0xA0b86a33E6441b59A82e08A7E9FF5e0a6B1C1E92', decimals: 6 }
-        }
-      },
-      polygon: {
-        chainId: 137,
-        tokens: {
-          MATIC: { address: '0x0000000000000000000000000000000000000000', decimals: 18 },
-          USDT: { address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', decimals: 6 },
-          USDC: { address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', decimals: 6 }
-        }
-      }
-    });
+    // Contract addresses - Using valid WETH contract on Sepolia for testing  
+    this.ESCROW_CONTRACT_ADDRESS = process.env.ESCROW_CONTRACT_ADDRESS || '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14';
     
     // Settings
     this.AUTO_RELEASE_DELAY = process.env.AUTO_RELEASE_DELAY || '604800'; // 7 days
@@ -77,12 +52,47 @@ class Config {
   }
 
   public getSupportedTokens(): any {
-    try {
-      return JSON.parse(this.SUPPORTED_TOKENS!);
-    } catch (error) {
-      console.error('Error parsing supported tokens:', error);
-      return {};
-    }
+    return {
+      ethereum: {
+        chainId: 1,
+        name: 'Ethereum Mainnet',
+        rpcUrl: this.ETHEREUM_RPC_URL,
+        tokens: {
+          ETH: { 
+            address: '0x0000000000000000000000000000000000000000', 
+            decimals: 18,
+            symbol: 'ETH',
+            name: 'Ethereum'
+          }
+        }
+      },
+      sepolia: {
+        chainId: 11155111,
+        name: 'Sepolia Testnet',
+        rpcUrl: this.SEPOLIA_RPC_URL,
+        tokens: {
+          ETH: { 
+            address: '0x0000000000000000000000000000000000000000', 
+            decimals: 18,
+            symbol: 'ETH',
+            name: 'Ethereum'
+          }
+        }
+      },
+      localhost: {
+        chainId: 1337,
+        name: 'Local Hardhat',
+        rpcUrl: this.LOCAL_RPC_URL,
+        tokens: {
+          ETH: { 
+            address: '0x0000000000000000000000000000000000000000', 
+            decimals: 18,
+            symbol: 'ETH',
+            name: 'Ethereum'
+          }
+        }
+      }
+    };
   }
 
   public getChainConfig(chainId: number): any {
@@ -90,14 +100,18 @@ class Config {
     
     switch (chainId) {
       case 1:
-        return { name: 'Ethereum', rpcUrl: this.ETHEREUM_RPC_URL, ...tokens.ethereum };
-      case 137:
-        return { name: 'Polygon', rpcUrl: this.POLYGON_RPC_URL, ...tokens.polygon };
-      case 56:
-        return { name: 'BSC', rpcUrl: this.BSC_RPC_URL, ...tokens.bsc };
+        return tokens.ethereum;
+      case 11155111:
+        return tokens.sepolia;
+      case 1337:
+        return tokens.localhost;
       default:
-        throw new Error(`Unsupported chain ID: ${chainId}`);
+        throw new Error(`Unsupported chain ID: ${chainId}. Only Ethereum (1), Sepolia (11155111), and Local (1337) are supported.`);
     }
+  }
+
+  public getSupportedChainIds(): number[] {
+    return [1, 11155111, 1337]; // Mainnet, Sepolia, Local
   }
 }
 

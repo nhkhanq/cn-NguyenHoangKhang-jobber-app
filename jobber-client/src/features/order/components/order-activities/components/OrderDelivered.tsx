@@ -5,7 +5,7 @@ import ChatBox from 'src/features/chat/components/chatbox/ChatBox';
 import { IChatBuyerProps, IChatSellerProps } from 'src/features/chat/interfaces/chat.interface';
 import { OrderContext } from 'src/features/order/context/OrderContext';
 import { IDeliveredWork, IOrderDeliveredModal, IOrderDeliveredProps, IOrderMessage } from 'src/features/order/interfaces/order.interface';
-import { useApproveOrderMutation } from 'src/features/order/services/order.service';
+import { useApproveOrderMutation, useApproveCryptoOrderMutation } from 'src/features/order/services/order.service';
 import Button from 'src/shared/button/Button';
 import ApprovalModal from 'src/shared/modals/ApprovalModal';
 import { IApprovalModalContent } from 'src/shared/modals/interfaces/modal.interface';
@@ -16,6 +16,19 @@ import { v4 as uuidv4 } from 'uuid';
 const OrderDelivered: ForwardRefExoticComponent<Omit<IOrderDeliveredProps, 'ref'> & RefAttributes<HTMLDivElement>> = forwardRef(
   (_, ref) => {
     const { order, authUser, viewDeliveryBtnClicked } = useContext(OrderContext);
+
+    // Debug logging for crypto order detection
+    console.log('🔍 OrderDelivered Debug:', {
+      paymentType: order?.paymentType,
+      cryptoPayment: order?.cryptoPayment,
+      approved: order?.approved,
+      delivered: order?.delivered,
+      status: order?.status,
+      authUsername: authUser?.username,
+      buyerUsername: order?.buyerUsername,
+      isBuyer: authUser?.username === order?.buyerUsername
+    });
+
     const [orderDeliveredModal, setOrderDeliveredModal] = useState<IOrderDeliveredModal>({
       delivery: viewDeliveryBtnClicked as boolean,
       deliveryApproval: false
@@ -23,6 +36,7 @@ const OrderDelivered: ForwardRefExoticComponent<Omit<IOrderDeliveredProps, 'ref'
     const [approvalModalContent, setApprovalModalContent] = useState<IApprovalModalContent>();
     const [showChatBox, setShowChatBox] = useState<boolean>(false);
     const [approveOrder] = useApproveOrderMutation();
+    const [approveCryptoOrder] = useApproveCryptoOrderMutation();
     const chatSeller: IChatSellerProps = {
       username: `${order?.sellerUsername}`,
       _id: `${order?.sellerId}`,
@@ -47,9 +61,22 @@ const OrderDelivered: ForwardRefExoticComponent<Omit<IOrderDeliveredProps, 'ref'
           totalEarnings: 0.8 * parseInt(`${order?.price}`),
           purchasedGigs: `${order?.gigId}`
         };
-        await approveOrder({ orderId: `${order?.orderId}`, body: orderMessage });
+
+        // Check if this is a crypto order and use appropriate approval endpoint
+        if (order?.paymentType === 'crypto' || order?.cryptoPayment) {
+          // Use crypto-specific approval endpoint
+          await approveCryptoOrder({
+            orderId: `${order?.orderId}`,
+            body: orderMessage
+          });
+          showSuccessToast('Crypto payment released! Seller will receive ETH in their wallet.');
+        } else {
+          // Use regular Stripe approval
+          await approveOrder({ orderId: `${order?.orderId}`, body: orderMessage });
+          showSuccessToast('Gig approval successful.');
+        }
+
         setOrderDeliveredModal({ ...orderDeliveredModal, deliveryApproval: false });
-        showSuccessToast('Gig approval successful.');
       } catch (error) {
         showErrorToast('Error approving gig delivery.');
       }
@@ -163,7 +190,10 @@ const OrderDelivered: ForwardRefExoticComponent<Omit<IOrderDeliveredProps, 'ref'
                     )}
                     {order.approved && <p className="text-sm font-normal italic">{TimeAgo.dayWithTime(`${order?.approvedAt}`)}</p>}
                   </div>
-                  {!order.approved && authUser?.username === order.buyerUsername && (
+                  {((!order.approved && authUser?.username === order.buyerUsername) ||
+                    (order?.paymentType === 'crypto' &&
+                      order?.cryptoPayment?.status !== 'completed' &&
+                      authUser?.username === order.buyerUsername)) && (
                     <div className="my-3 flex flex-col">
                       <div className="relative overflow-x-auto">
                         <div className="text-left text-sm text-gray-500">
@@ -171,25 +201,42 @@ const OrderDelivered: ForwardRefExoticComponent<Omit<IOrderDeliveredProps, 'ref'
                             <div className="w-full text-sm dark:text-white">
                               <div className="flex flex-col justify-between text-[#777d74]">
                                 <span className="text-sm md:text-[15px]">
-                                  If you have any issue to discuss with the seller before approving, you can go to
-                                  <a onClick={() => setShowChatBox(!showChatBox)} className="px-1 text-blue-500 hover:underline" href="#">
-                                    Go to Inbox
-                                  </a>
-                                  to contact the seller.
+                                  {order?.paymentType === 'crypto' || order?.cryptoPayment
+                                    ? "Ready to release payment from escrow? The seller has delivered your order. Click below to release ETH to seller's wallet."
+                                    : 'If you have any issue to discuss with the seller before approving, you can go to'}
+                                  {!(order?.paymentType === 'crypto' || order?.cryptoPayment) && (
+                                    <a onClick={() => setShowChatBox(!showChatBox)} className="px-1 text-blue-500 hover:underline" href="#">
+                                      Go to Inbox
+                                    </a>
+                                  )}
+                                  {!(order?.paymentType === 'crypto' || order?.cryptoPayment) && ' to contact the seller.'}
                                 </span>
                                 <div className="mt-3 flex pb-6">
                                   <Button
                                     className="rounded bg-green-500 px-6 py-3 text-center text-sm font-bold text-white hover:bg-green-400 focus:outline-none md:px-4 md:py-2 md:text-base"
                                     onClick={() => {
-                                      setApprovalModalContent({
-                                        header: 'Approve Final Delivery',
-                                        body: 'Got everything you need? Great! Once you approve the delivery, your work will be marked as complete.',
-                                        btnText: 'Approve Final Delivery',
-                                        btnColor: 'bg-sky-500 hover:bg-sky-400'
-                                      });
+                                      const modalContent =
+                                        order?.paymentType === 'crypto' || order?.cryptoPayment
+                                          ? {
+                                              header: 'Release Crypto Payment',
+                                              body: "This will release the ETH from escrow to the seller's wallet. This action cannot be undone.",
+                                              btnText: 'Release Payment',
+                                              btnColor: 'bg-orange-500 hover:bg-orange-400'
+                                            }
+                                          : {
+                                              header: 'Approve Final Delivery',
+                                              body: 'Got everything you need? Great! Once you approve the delivery, your work will be marked as complete.',
+                                              btnText: 'Approve Final Delivery',
+                                              btnColor: 'bg-sky-500 hover:bg-sky-400'
+                                            };
+                                      setApprovalModalContent(modalContent);
                                       setOrderDeliveredModal({ ...orderDeliveredModal, deliveryApproval: true });
                                     }}
-                                    label="Yes, Approve delivery"
+                                    label={
+                                      order?.paymentType === 'crypto' || order?.cryptoPayment
+                                        ? 'Release ETH Payment'
+                                        : 'Yes, Approve delivery'
+                                    }
                                   />
                                 </div>
                               </div>

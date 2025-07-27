@@ -1,38 +1,39 @@
-import { FC, ReactNode, Suspense } from 'react'
-import { RouteObject, useRoutes } from 'react-router-dom'
+import { FC, ReactNode, Suspense } from 'react';
+import { RouteObject, useRoutes } from 'react-router-dom';
 
-import AppPage from './features/AppPage'
-import ConfirmEmail from './features/auth/components/ConfirmEmail'
-import ResetPassword from './features/auth/components/ResetPassword'
-import VerifyOTP from './features/auth/components/VerifyOTP'
-import BuyerDashboard from './features/buyer/components/Dashboard'
-import Chat from './features/chat/components/Chat'
-import Error from './features/error/Error'
-import AddGig from './features/gigs/components/gig/AddGig'
-import EditGig from './features/gigs/components/gig/EditGig'
-import Gigs from './features/gigs/components/gigs/Gigs'
-import GigView from './features/gigs/components/view/GigView'
-import Home from './features/home/components/Home'
-import GigInfoDisplay from './features/index/gig-tabs/GigInfoDisplay'
-import GigsIndexDisplay from './features/index/gig-tabs/GigsIndexDisplay'
-import Checkout from './features/order/components/Checkout'
-import Order from './features/order/components/Order'
-import Requirement from './features/order/components/Requirement'
-import ProtectedRoute from './features/ProtectedRoute'
-import AddSeller from './features/sellers/components/add/AddSeller'
-import ManageEarnings from './features/sellers/components/dashboard/ManageEarnings'
-import ManageOrders from './features/sellers/components/dashboard/ManageOrders'
-import Seller from './features/sellers/components/dashboard/Seller'
-import SellerDashboard from './features/sellers/components/dashboard/SellerDashboard'
-import CurrentSellerProfile from './features/sellers/components/profile/CurrentSellerProfile'
-import SellerProfile from './features/sellers/components/profile/SellerProfile'
-import Settings from './features/settings/components/Settings'
+import AppPage from './features/AppPage';
+import ConfirmEmail from './features/auth/components/ConfirmEmail';
+import ResetPassword from './features/auth/components/ResetPassword';
+import VerifyOTP from './features/auth/components/VerifyOTP';
+import BuyerDashboard from './features/buyer/components/Dashboard';
+import Chat from './features/chat/components/Chat';
+import Error from './features/error/Error';
+import AddGig from './features/gigs/components/gig/AddGig';
+import EditGig from './features/gigs/components/gig/EditGig';
+import Gigs from './features/gigs/components/gigs/Gigs';
+import GigView from './features/gigs/components/view/GigView';
+import Home from './features/home/components/Home';
+import GigInfoDisplay from './features/index/gig-tabs/GigInfoDisplay';
+import GigsIndexDisplay from './features/index/gig-tabs/GigsIndexDisplay';
+import Checkout from './features/order/components/Checkout';
+import Order from './features/order/components/Order';
+import Requirement from './features/order/components/Requirement';
+import ProtectedRoute from './features/ProtectedRoute';
+import AddSeller from './features/sellers/components/add/AddSeller';
+import ManageEarnings from './features/sellers/components/dashboard/ManageEarnings';
+import ManageOrders from './features/sellers/components/dashboard/ManageOrders';
+import Seller from './features/sellers/components/dashboard/Seller';
+import SellerDashboard from './features/sellers/components/dashboard/SellerDashboard';
+import CurrentSellerProfile from './features/sellers/components/profile/CurrentSellerProfile';
+import SellerProfile from './features/sellers/components/profile/SellerProfile';
+import Settings from './features/settings/components/Settings';
+import CryptoCheckout from './features/order/components/CryptoCheckout';
 
 const Layout = ({ backgroundColor = '#fff', children }: { backgroundColor: string; children: ReactNode }): JSX.Element => (
   <div style={{ backgroundColor }} className="flex flex-grow">
     {children}
   </div>
-)
+);
 
 const AppRouter: FC = () => {
   const routes: RouteObject[] = [
@@ -265,6 +266,18 @@ const AppRouter: FC = () => {
       )
     },
     {
+      path: '/gig/crypto-checkout/:gigId',
+      element: (
+        <Suspense>
+          <ProtectedRoute>
+            <Layout backgroundColor="#ffffff">
+              <CryptoCheckout />
+            </Layout>
+          </ProtectedRoute>
+        </Suspense>
+      )
+    },
+    {
       path: '/gig/checkout/:gigId',
       element: (
         <Suspense>
@@ -320,9 +333,9 @@ const AppRouter: FC = () => {
         </Suspense>
       )
     }
-  ]
+  ];
 
-  return useRoutes(routes)
-}
+  return useRoutes(routes);
+};
 
-export default AppRouter
+export default AppRouter;

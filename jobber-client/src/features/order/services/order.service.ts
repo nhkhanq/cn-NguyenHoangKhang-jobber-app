@@ -86,6 +86,16 @@ export const ordersApi = api.injectEndpoints({
         };
       },
       invalidatesTags: ['Order']
+    }),
+    approveCryptoOrder: build.mutation<IResponse, { orderId: string; body: IOrderMessage }>({
+      query({ orderId, body }) {
+        return {
+          url: `order/crypto/${orderId}/complete`,
+          method: 'PUT',
+          body
+        };
+      },
+      invalidatesTags: ['Order']
     })
   })
 });
@@ -100,5 +110,6 @@ export const {
   useRequestDeliveryDateExtensionMutation,
   useUpdateDeliveryDateMutation,
   useDeliverOrderMutation,
-  useApproveOrderMutation
+  useApproveOrderMutation,
+  useApproveCryptoOrderMutation
 } = ordersApi;

@@ -2,13 +2,15 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ICryptoOrder extends Document {
   orderId: string;
-  jobberOrderId: string;
-  buyer: string;
-  seller: string;
+  jobberOrderId?: string;
+  buyerAddress: string;
+  sellerAddress: string;
   tokenAddress: string;
   tokenSymbol: string;
   amount: string;
+  usdAmount: number;
   platformFee: string;
+  platformFeeUSD: number;
   chainId: number;
   status: 'created' | 'paid' | 'delivered' | 'completed' | 'disputed' | 'cancelled' | 'refunded';
   autoRelease: boolean;
@@ -17,6 +19,15 @@ export interface ICryptoOrder extends Document {
   confirmations: number;
   releaseTime?: Date;
   completedAt?: Date;
+  deliveredAt?: Date;
+  gigTitle?: string;
+  description?: string;
+  contractCreationTx?: string;
+  priceData?: {
+    ethPriceUSD: number;
+    exchangeRate: string;
+    conversionTime: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,13 +35,15 @@ export interface ICryptoOrder extends Document {
 const CryptoOrderSchema: Schema = new Schema(
   {
     orderId: { type: String, required: true, unique: true },
-    jobberOrderId: { type: String, required: true },
-    buyer: { type: String, required: true },
-    seller: { type: String, required: true },
+    jobberOrderId: { type: String },
+    buyerAddress: { type: String, required: true },
+    sellerAddress: { type: String, required: true },
     tokenAddress: { type: String, required: true },
     tokenSymbol: { type: String, required: true },
     amount: { type: String, required: true },
+    usdAmount: { type: Number, required: true },
     platformFee: { type: String, required: true },
+    platformFeeUSD: { type: Number, required: true },
     chainId: { type: Number, required: true },
     status: {
       type: String,
@@ -43,7 +56,16 @@ const CryptoOrderSchema: Schema = new Schema(
     blockNumber: { type: Number },
     confirmations: { type: Number, default: 0 },
     releaseTime: { type: Date },
-    completedAt: { type: Date }
+    completedAt: { type: Date },
+    deliveredAt: { type: Date },
+    gigTitle: { type: String },
+    description: { type: String },
+    contractCreationTx: { type: String },
+    priceData: {
+      ethPriceUSD: { type: Number },
+      exchangeRate: { type: String },
+      conversionTime: { type: Date }
+    }
   },
   { timestamps: true }
 );

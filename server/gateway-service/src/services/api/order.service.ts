@@ -69,6 +69,32 @@ class OrderService {
     const response: AxiosResponse = await axiosOrderInstance.put('/notification/mark-as-read', { notificationId })
     return response
   }
+
+  // Crypto order methods
+  async createCryptoOrder(body: IOrderDocument): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosOrderInstance.post('/crypto', body)
+    return response
+  }
+
+  async confirmCryptoPayment(orderId: string, body: { transactionHash: string; blockNumber: number }): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosOrderInstance.put(`/crypto/${orderId}/confirm-payment`, body)
+    return response
+  }
+
+  async deliverCryptoOrder(orderId: string, body: any): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosOrderInstance.put(`/crypto/${orderId}/delivered`, body)
+    return response
+  }
+
+  async completeCryptoOrder(orderId: string, body: any): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosOrderInstance.put(`/crypto/${orderId}/complete`, body)
+    return response
+  }
+
+  async cancelCryptoOrder(orderId: string, body: { reason: string; buyerId?: string; sellerId?: string; purchasedGigs?: number }): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosOrderInstance.put(`/crypto/${orderId}/cancel`, body)
+    return response
+  }
 }
 
 export const orderService: OrderService = new OrderService()

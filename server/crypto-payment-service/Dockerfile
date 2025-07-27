@@ -1,14 +1,11 @@
-# Multi-stage build for production optimization
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
 COPY tsconfig.json ./
 COPY hardhat.config.ts ./
 
-# Install all dependencies (including dev dependencies for building)
 RUN npm ci
 
 # Copy source code
@@ -54,7 +51,7 @@ EXPOSE 4012
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:4012/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+    CMD node -e "require('http').get('http://localhost:4008/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # Start the application
 CMD ["node", "build/app.js"]
@@ -79,7 +76,7 @@ RUN npm install
 COPY . .
 
 # Expose port
-EXPOSE 4012
+EXPOSE 4008
 
 # Start in development mode
 CMD ["npm", "run", "dev"] 

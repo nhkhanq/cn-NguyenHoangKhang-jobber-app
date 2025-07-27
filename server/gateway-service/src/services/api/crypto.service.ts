@@ -15,18 +15,54 @@ class CryptoService {
     return response
   }
 
-  async getWalletBalance(walletAddress: string, chainId: number): Promise<AxiosResponse> {
-    const response: AxiosResponse = await axiosCryptoInstance.get(`/balance/${walletAddress}/${chainId}`)
+  async getETHPrice(usdAmount: number): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosCryptoInstance.get(`/price?usdAmount=${usdAmount}`)
     return response
   }
 
-  async createCryptoOrder(body: any): Promise<AxiosResponse> {
+  async getSellerWallet(sellerId: string): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosCryptoInstance.get(`/sellers/${sellerId}/wallet`)
+    return response
+  }
+
+  async createOrder(body: any): Promise<AxiosResponse> {
     const response: AxiosResponse = await axiosCryptoInstance.post('/orders', body)
     return response
   }
 
-  async getCryptoOrder(orderId: string): Promise<AxiosResponse> {
+  async getOrder(orderId: string): Promise<AxiosResponse> {
     const response: AxiosResponse = await axiosCryptoInstance.get(`/orders/${orderId}`)
+    return response
+  }
+
+  async processPayment(orderId: string, body: { transactionHash: string; blockNumber: number }): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosCryptoInstance.post(`/orders/${orderId}/payment`, body)
+    return response
+  }
+
+  async updateOrderStatus(orderId: string, body: { status: string; transactionHash?: string; blockNumber?: number }): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosCryptoInstance.put(`/orders/${orderId}/status`, body)
+    return response
+  }
+
+  async completeOrder(orderId: string): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosCryptoInstance.put(`/orders/${orderId}/complete`)
+    return response
+  }
+
+  async getBalance(address: string, chainId: number): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosCryptoInstance.get(`/balance/${address}/${chainId}`)
+    return response
+  }
+
+  async getTransactionDetails(txHash: string, chainId: number): Promise<AxiosResponse> {
+    const response: AxiosResponse = await axiosCryptoInstance.get(`/transaction/${txHash}/${chainId}`)
+    return response
+  }
+
+  async getOrdersByBuyer(buyerAddress: string, query: any): Promise<AxiosResponse> {
+    const queryString = new URLSearchParams(query).toString()
+    const response: AxiosResponse = await axiosCryptoInstance.get(`/buyers/${buyerAddress}/orders?${queryString}`)
     return response
   }
 
@@ -35,18 +71,8 @@ class CryptoService {
     return response
   }
 
-  async confirmPayment(orderId: string, body: { transactionHash: string; blockNumber: number }): Promise<AxiosResponse> {
-    const response: AxiosResponse = await axiosCryptoInstance.put(`/orders/${orderId}/confirm-payment`, body)
-    return response
-  }
-
   async markDelivered(orderId: string, body: any): Promise<AxiosResponse> {
     const response: AxiosResponse = await axiosCryptoInstance.put(`/orders/${orderId}/delivered`, body)
-    return response
-  }
-
-  async completeOrder(orderId: string): Promise<AxiosResponse> {
-    const response: AxiosResponse = await axiosCryptoInstance.put(`/orders/${orderId}/complete`)
     return response
   }
 
@@ -62,11 +88,6 @@ class CryptoService {
 
   async cancelOrder(orderId: string, body: { reason: string }): Promise<AxiosResponse> {
     const response: AxiosResponse = await axiosCryptoInstance.put(`/orders/${orderId}/cancel`, body)
-    return response
-  }
-
-  async getOrdersByBuyer(buyerAddress: string): Promise<AxiosResponse> {
-    const response: AxiosResponse = await axiosCryptoInstance.get(`/orders/buyer/${buyerAddress}`)
     return response
   }
 

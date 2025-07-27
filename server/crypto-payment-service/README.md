@@ -74,7 +74,7 @@ Tạo file `.env`:
 ```bash
 # Server Configuration
 NODE_ENV=development
-PORT=4012
+PORT=4008
 CLIENT_URL=http://localhost:3000
 
 # Database
@@ -253,7 +253,7 @@ const router = express.Router();
 router.use("/crypto", authMiddleware.verifyUser);
 router.use("/crypto", (req, res) => {
   // Proxy to crypto-payment-service
-  proxy("http://localhost:4012")(req, res);
+  proxy("http://localhost:4008")(req, res);
 });
 
 export { router as cryptoRoutes };
@@ -337,7 +337,7 @@ COPY package*.json ./
 RUN npm ci --only=production
 COPY . .
 RUN npm run build
-EXPOSE 4012
+EXPOSE 4008
 CMD ["npm", "start"]
 ```
 
@@ -349,7 +349,7 @@ services:
   crypto-payment-service:
     build: ./server/crypto-payment-service
     ports:
-      - "4012:4012"
+      - "4008:4008"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=mongodb://mongo:27017/jobber-crypto

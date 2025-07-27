@@ -155,6 +155,18 @@ export interface IOrderDocument {
   buyerReview?: IOrderReview;
   sellerReview?: IOrderReview;
   paymentIntent?: string;
+  paymentType?: string;
+  cryptoPayment?: {
+    tokenAddress?: string;
+    tokenSymbol?: string;
+    buyerWallet?: string;
+    sellerWallet?: string;
+    chainId?: number;
+    status?: string;
+    cryptoOrderId?: string;
+    transactionHash?: string;
+    blockNumber?: number;
+  };
 }
 
 export interface IOrderMessage {
@@ -205,4 +217,20 @@ export interface IOrderNotifcation {
   message: string;
   rating?: number;
   createdAt: Date;
+}
+
+export interface ICryptoOrderRequest {
+  usdAmount: number;
+  buyerAddress: string;
+  sellerAddress: string;
+  gigTitle: string;
+  description: string;
+  chainId: number;
+  jobberOrderId?: string;
+}
+
+export interface ICryptoPaymentRequest {
+  orderId: string;
+  transactionHash: string;
+  blockNumber: number;
 }

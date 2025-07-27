@@ -15,4 +15,13 @@ export class Create {
     const response: AxiosResponse = await orderService.createOrder(req.body)
     res.status(StatusCodes.CREATED).json({ message: response.data.message, order: response.data.order })
   }
+
+  public async createCryptoOrder(req: Request, res: Response): Promise<void> {
+    const response: AxiosResponse = await orderService.createCryptoOrder(req.body)
+    res.status(StatusCodes.CREATED).json({ 
+      message: response.data.message, 
+      order: response.data.order,
+      cryptoOrder: response.data.cryptoOrder 
+    })
+  }
 }

@@ -24,6 +24,14 @@ class OrderRoutes {
     this.router.put('/order/gig/:type/:orderId', Update.prototype.deliveryDate)
     this.router.put('/order/notification/mark-as-read', Update.prototype.markNotificationAsRead)
 
+    // Crypto order routes
+    this.router.post('/order/crypto', Create.prototype.createCryptoOrder)
+    this.router.put('/order/crypto/:orderId/confirm-payment', Update.prototype.confirmCryptoPayment)
+    this.router.put('/order/crypto/:orderId/delivered', Update.prototype.deliverCryptoOrder)
+    this.router.put('/order/crypto/:orderId/approve', Update.prototype.completeCryptoOrder)
+    this.router.put('/order/crypto/:orderId/complete', Update.prototype.completeCryptoOrder) // Same as approve
+    this.router.put('/order/crypto/:orderId/cancel', Update.prototype.cancelCryptoOrder)
+
     return this.router
   }
 }

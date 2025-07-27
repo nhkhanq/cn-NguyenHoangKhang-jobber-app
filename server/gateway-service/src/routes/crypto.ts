@@ -1,6 +1,4 @@
-import { Create } from '@gateway/controllers/crypto/create'
-import { Get } from '@gateway/controllers/crypto/get'
-import { Update } from '@gateway/controllers/crypto/update'
+import { CryptoController } from '@gateway/controllers/crypto/crypto'
 import express, { Router } from 'express'
 
 class CryptoRoutes {
@@ -11,28 +9,26 @@ class CryptoRoutes {
   }
 
   public routes(): Router {
-    // Create operations
-    this.router.post('/crypto/orders', Create.prototype.cryptoOrder)
+    // Token and price routes
+    this.router.get('/crypto/tokens', CryptoController.prototype.getSupportedTokens)
+    this.router.get('/crypto/price', CryptoController.prototype.getETHPrice)
 
-    // Get operations - Utility endpoints
-    this.router.get('/crypto/tokens', Get.prototype.supportedTokens)
-    this.router.get('/crypto/balance/:walletAddress/:chainId', Get.prototype.walletBalance)
+    // Seller wallet route
+    this.router.get('/crypto/sellers/:sellerId/wallet', CryptoController.prototype.getSellerWallet)
+    
+    // Crypto order management routes  
+    this.router.post('/crypto/orders', CryptoController.prototype.createOrder)
+    this.router.get('/crypto/orders/:orderId', CryptoController.prototype.getOrder)
 
-    // Get operations - Order queries
-    this.router.get('/crypto/orders/:orderId', Get.prototype.cryptoOrder)
-    this.router.get('/crypto/orders/jobber/:jobberOrderId', Get.prototype.cryptoOrdersByJobberOrderId)
-    this.router.get('/crypto/orders/buyer/:buyerAddress', Get.prototype.buyerOrders)
-    this.router.get('/crypto/orders/seller/:sellerAddress', Get.prototype.sellerOrders)
-
-    // Update operations - Order lifecycle
-    this.router.put('/crypto/orders/:orderId/confirm-payment', Update.prototype.confirmPayment)
-    this.router.put('/crypto/orders/:orderId/delivered', Update.prototype.markDelivered)
-    this.router.put('/crypto/orders/:orderId/complete', Update.prototype.completeOrder)
-    this.router.put('/crypto/orders/:orderId/cancel', Update.prototype.cancelOrder)
-
-    // Update operations - Dispute management  
-    this.router.put('/crypto/orders/:orderId/dispute', Update.prototype.raiseDispute)
-    this.router.put('/crypto/orders/:orderId/resolve-dispute', Update.prototype.resolveDispute)
+    // Payment processing routes
+    this.router.post('/crypto/orders/:orderId/payment', CryptoController.prototype.processPayment)
+    this.router.put('/crypto/orders/:orderId/status', CryptoController.prototype.updateOrderStatus)
+    this.router.put('/crypto/orders/:orderId/complete', CryptoController.prototype.completeOrder)
+    
+    // Balance and utility routes
+    this.router.get('/crypto/balance/:address/:chainId', CryptoController.prototype.getBalance)
+    this.router.get('/crypto/transaction/:txHash/:chainId', CryptoController.prototype.getTransactionDetails)
+    this.router.get('/crypto/buyers/:buyerAddress/orders', CryptoController.prototype.getOrdersByBuyer)
 
     return this.router
   }

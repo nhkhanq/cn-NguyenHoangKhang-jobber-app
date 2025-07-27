@@ -40,4 +40,29 @@ export class Update {
     const response: AxiosResponse = await orderService.markNotificationAsRead(notificationId)
     res.status(StatusCodes.OK).json({ message: response.data.message, notification: response.data.notification })
   }
+
+  // Crypto order methods
+  public async confirmCryptoPayment(req: Request, res: Response): Promise<void> {
+    const { orderId } = req.params
+    const response: AxiosResponse = await orderService.confirmCryptoPayment(orderId, req.body)
+    res.status(StatusCodes.OK).json({ message: response.data.message, order: response.data.order })
+  }
+
+  public async deliverCryptoOrder(req: Request, res: Response): Promise<void> {
+    const { orderId } = req.params
+    const response: AxiosResponse = await orderService.deliverCryptoOrder(orderId, req.body)
+    res.status(StatusCodes.OK).json({ message: response.data.message, order: response.data.order })
+  }
+
+  public async completeCryptoOrder(req: Request, res: Response): Promise<void> {
+    const { orderId } = req.params
+    const response: AxiosResponse = await orderService.completeCryptoOrder(orderId, req.body)
+    res.status(StatusCodes.OK).json({ message: response.data.message, order: response.data.order })
+  }
+
+  public async cancelCryptoOrder(req: Request, res: Response): Promise<void> {
+    const { orderId } = req.params
+    const response: AxiosResponse = await orderService.cancelCryptoOrder(orderId, req.body)
+    res.status(StatusCodes.OK).json({ message: response.data.message, order: response.data.order })
+  }
 }

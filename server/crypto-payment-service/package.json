@@ -1,7 +1,7 @@
 {
   "name": "crypto-payment-service",
   "version": "1.0.0",
-  "description": "Custom blockchain payment service for Jobber marketplace - Self-built crypto system",
+  "description": "Custom blockchain payment service for Jobber marketplace - Self-built crypto system (Port 4008)",
   "main": "build/app.js",
   "scripts": {
     "start": "node build/app.js",
@@ -17,18 +17,23 @@
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/**/*.ts",
     "deploy:contracts": "hardhat run scripts/deploy.ts --network polygon",
+    "deploy:local": "hardhat run scripts/deploy-simple.ts --network localhost",
+    "deploy:sepolia": "hardhat run scripts/deploy-simple.ts --network sepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy-simple.ts --network mainnet",
     "compile:contracts": "hardhat compile",
     "test:contracts": "hardhat test",
     "test:contracts:coverage": "npx hardhat coverage",
     "verify:contracts": "hardhat verify --network polygon",
     "node:local": "hardhat node",
+    "generate:wallet": "ts-node scripts/generate-wallet.ts",
+    "setup:env": "cp .env.example .env && echo 'Please update .env with your values'",
     "clean": "rm -rf build && rm -rf cache && rm -rf artifacts"
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@openzeppelin/contracts": "^4.9.3",
     "amqplib": "^0.10.3",
-    "axios": "^1.4.0",
+    "axios": "^1.10.0",
     "bcryptjs": "^2.4.3",
     "bull": "^4.11.3",
     "compression": "^1.7.4",
@@ -53,7 +58,6 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-
     "@types/amqplib": "^0.10.1",
     "@types/bcryptjs": "^2.4.2",
     "@types/compression": "^1.7.2",

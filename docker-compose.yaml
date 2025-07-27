@@ -369,23 +369,33 @@ services:
   #     - postgres
   #   networks:
   #     - elastic
-    # crypto-payment-service:
-    #   build: ./server/crypto-payment-service
-    #   ports:
-    #     - "4012:4012"
-    #   environment:
-    #     - NODE_ENV=development
-    #     - PORT=4012
-    #     - DATABASE_URL=mongodb://mongodb:27017/crypto-payments
-    #     - ORDER_SERVICE_URL=http://order-service:4006
-    #     - GATEWAY_URL=http://gateway-service:4000
-    #     - JWT_TOKEN=${JWT_TOKEN}
-    #     - GATEWAY_JWT_TOKEN=${GATEWAY_JWT_TOKEN}
-    #   depends_on:
-    #     - mongodb
-    #     - order-service
-    #   networks:
-    #     - elastic
+
+  # crypto-payment:
+  #   container_name: crypto-payment-container
+  #   build:
+  #     context: ./server/crypto-payment-service
+  #     dockerfile: Dockerfile.dev
+  #   restart: always
+  #   ports:
+  #     - "4008:4008"
+  #   env_file: ./server/crypto-payment-service/.env
+  #   environment:
+  #     - NODE_ENV=development
+  #     - PORT=4008
+  #     - DATABASE_URL=mongodb://mongodb_container:27017/crypto-payments
+  #     - ORDER_SERVICE_URL=http://order-container:4006
+  #     - GATEWAY_URL=http://gateway-container:4000
+  #     - JWT_TOKEN=84c94ce9d13434cf635e20a1bbfe30f3
+  #     - GATEWAY_JWT_TOKEN=d41d8cd98f00b204e9800998ecf8427e
+  #     - REDIS_URL=redis://redis_container:6379
+  #   depends_on:
+  #     - mongodb
+  #     - redis
+  #   networks:
+  #     - elastic
+  #   volumes:
+  #     - ./server/crypto-payment-service/deployments:/app/deployments
+  #     - ./server/crypto-payment-service/artifacts:/app/artifacts
 
 networks:
   elastic:

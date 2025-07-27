@@ -52,9 +52,10 @@ class Application {
   private async connectToDatabase(): Promise<void> {
     try {
       await mongoose.connect(config.DATABASE_URL!);
-      console.log('Connected to MongoDB successfully');
+      console.log('✅ Connected to MongoDB successfully');
     } catch (error) {
-      console.error('MongoDB connection failed:', error);
+      console.error('❌ MongoDB connection failed:', error);
+      console.log('📝 Make sure MongoDB is running: mongod --dbpath ./data');
       process.exit(1);
     }
   }
