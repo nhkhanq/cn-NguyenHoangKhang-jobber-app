@@ -28,6 +28,7 @@ import CurrentSellerProfile from './features/sellers/components/profile/CurrentS
 import SellerProfile from './features/sellers/components/profile/SellerProfile';
 import Settings from './features/settings/components/Settings';
 import CryptoCheckout from './features/order/components/CryptoCheckout';
+import AIRecommendationPage from './features/ai-recommendation/components/AIRecommendationPage';
 
 const Layout = ({ backgroundColor = '#fff', children }: { backgroundColor: string; children: ReactNode }): JSX.Element => (
   <div style={{ backgroundColor }} className="flex flex-grow">
@@ -236,6 +237,18 @@ const AppRouter: FC = () => {
           <ProtectedRoute>
             <Layout backgroundColor="#ffffff">
               <Gigs type="search" />
+            </Layout>
+          </ProtectedRoute>
+        </Suspense>
+      )
+    },
+    {
+      path: '/ai-recommendations',
+      element: (
+        <Suspense>
+          <ProtectedRoute>
+            <Layout backgroundColor="#ffffff">
+              <AIRecommendationPage />
             </Layout>
           </ProtectedRoute>
         </Suspense>

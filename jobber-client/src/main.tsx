@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { Persistor, persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
+import { HelmetProvider } from 'react-helmet-async';
 
 import App from './App.tsx';
 import { store } from './store/store.ts';
@@ -19,9 +20,11 @@ const persistor: Persistor = persistStore(store);
 // });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
+  <Provider store={store}>
+    <PersistGate persistor={persistor}>
+      <HelmetProvider>
         <App />
-      </PersistGate>
-    </Provider>
+      </HelmetProvider>
+    </PersistGate>
+  </Provider>
 );

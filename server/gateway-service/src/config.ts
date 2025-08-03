@@ -16,6 +16,7 @@ class Config {
   public ORDER_BASE_URL: string | undefined
   public REVIEW_BASE_URL: string | undefined
   public CRYPTO_PAYMENT_BASE_URL: string | undefined
+  public AI_RECOMMEND_SERVICE_URL: string | undefined
   public REDIS_HOST: string | undefined
   public ELASTIC_SEARCH_URL: string | undefined
 
@@ -33,6 +34,7 @@ class Config {
     this.ORDER_BASE_URL = process.env.ORDER_BASE_URL || ''
     this.REVIEW_BASE_URL = process.env.REVIEW_BASE_URL || ''
     this.CRYPTO_PAYMENT_BASE_URL = process.env.CRYPTO_PAYMENT_BASE_URL || ''
+    this.AI_RECOMMEND_SERVICE_URL = process.env.AI_RECOMMEND_SERVICE_URL || 'http://localhost:4009'
     this.REDIS_HOST = process.env.REDIS_HOST || ''
     this.ELASTIC_SEARCH_URL = process.env.ELASTIC_SEARCH_URL || ''
     

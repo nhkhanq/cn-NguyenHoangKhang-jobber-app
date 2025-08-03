@@ -1,9 +1,6 @@
 import { FC, ReactElement, useEffect } from 'react';
 import { ISellerGig } from 'src/features/gigs/interfaces/gig.interface';
-import {
-  useGetGigsByCategoryQuery,
-  useGetTopRatedGigsByCategoryQuery
-} from 'src/features/gigs/services/gigs.service';
+import { useGetGigsByCategoryQuery, useGetTopRatedGigsByCategoryQuery } from 'src/features/gigs/services/gigs.service';
 import { ISellerDocument } from 'src/features/sellers/interfaces/seller.interface';
 import { useGetRandomSellersQuery } from 'src/features/sellers/services/seller.service';
 import TopGigsView from 'src/shared/gigs/TopGigsView';
@@ -15,6 +12,7 @@ import { IReduxState } from 'src/store/store.interface';
 import FeaturedExperts from './FeaturedExperts';
 import HomeGigsView from './HomeGigsView';
 import HomeSlider from './HomeSlider';
+import AIRecommendationSection from 'src/features/ai-recommendation/components/AIRecommendationSection';
 
 const Home: FC = (): ReactElement => {
   const authUser = useAppSelector((state: IReduxState) => state.authUser);
@@ -49,6 +47,17 @@ const Home: FC = (): ReactElement => {
   return (
     <div className="m-auto px-6 w-screen relative min-h-screen xl:container md:px-12 lg:px-6">
       <HomeSlider />
+
+      {/* AI Recommendation Section */}
+      <AIRecommendationSection
+        title="Discover Services with AI"
+        subtitle="Describe what you need naturally - our AI will find the perfect freelancer for you"
+        maxResults={3}
+        showViewAll={true}
+        onViewAll={() => (window.location.href = '/ai-recommendations')}
+        className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl my-8"
+      />
+
       {topGigs.length > 0 && (
         <TopGigsView
           gigs={topGigs}

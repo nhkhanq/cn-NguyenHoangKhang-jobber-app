@@ -19,6 +19,9 @@ export const appRoutes = (app: Application) => {
   app.use('', healthRoutes.routes())
   app.use(BASE_PATH, authRoutes.routes())
   app.use(BASE_PATH, searchRoutes.routes())
+  
+  // AI routes with authentication 
+  app.use(BASE_PATH, authMiddleware.verifyUser, aiRoutes())
 
   app.use(BASE_PATH, authMiddleware.verifyUser, currentUserRoutes.routes())
   app.use(BASE_PATH, authMiddleware.verifyUser, gigRoutes.routes())
@@ -28,5 +31,4 @@ export const appRoutes = (app: Application) => {
   app.use(BASE_PATH, authMiddleware.verifyUser, orderRoutes.routes())
   app.use(BASE_PATH, authMiddleware.verifyUser, reviewRoutes.routes())
   app.use(BASE_PATH, authMiddleware.verifyUser, cryptoRoutes.routes())
-  app.use(BASE_PATH, authMiddleware.verifyUser, aiRoutes())
 }

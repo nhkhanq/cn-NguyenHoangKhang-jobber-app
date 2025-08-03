@@ -397,6 +397,37 @@ services:
   #     - ./server/crypto-payment-service/deployments:/app/deployments
   #     - ./server/crypto-payment-service/artifacts:/app/artifacts
 
+  ai-recommend:
+    container_name: ai-recommend-container
+    build:
+      context: ./server/ai-recommend-service
+      dockerfile: Dockerfile.dev
+    restart: always
+    ports:
+      - "4009:4009"
+    environment:
+      - ENABLE_APM=0
+      - NODE_ENV=development
+      - CLIENT_URL=http://localhost:3000
+      - DATABASE_URL=mongodb://mongodb_container:27017/jobber_ai_recommendations
+      - REDIS_HOST=redis://redis_container:6379
+      - GATEWAY_JWT_TOKEN=1282722b942e08c8a6cb4e8e8ec3b2e327
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GIG_SERVICE_URL=http://gig_container:4004/api/v1
+      - USERS_SERVICE_URL=http://users_container:4003/api/v1
+      - ORDER_SERVICE_URL=http://order_container:4006/api/v1
+      - RABBITMQ_ENDPOINT=amqp://jobber:jobberpass@rabbitmq_container:5672
+      - ELASTIC_SEARCH_URL=http://elastic:admin1234@elasticsearch_container:9200
+      - ELASTIC_APM_SERVER_URL=http://apm_server_container:8200
+      - ELASTIC_APM_SECRET_TOKEN=
+    depends_on:
+      - elasticsearch
+      - mongodb
+      - redis
+      - rabbitmq
+    networks:
+      - elastic
+
 networks:
   elastic:
     name: elastic

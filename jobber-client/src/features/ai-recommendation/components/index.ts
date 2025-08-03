@@ -1,0 +1,5 @@
+export { default as AIRecommendations } from './AIRecommendations'
+export { default as AIRecommendationCard } from './AIRecommendationCard'
+export { default as AIRecommendationPage } from './AIRecommendationPage'
+export { default as AIRecommendationSection } from './AIRecommendationSection'
+export { default as AISearchBox } from './AISearchBox'
