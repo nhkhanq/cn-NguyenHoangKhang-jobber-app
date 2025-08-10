@@ -62,18 +62,37 @@ const OrderDelivered: ForwardRefExoticComponent<Omit<IOrderDeliveredProps, 'ref'
           purchasedGigs: `${order?.gigId}`
         };
 
-        // Check if this is a crypto order and use appropriate approval endpoint
-        if (order?.paymentType === 'crypto' || order?.cryptoPayment) {
-          // Use crypto-specific approval endpoint
+        // ULTIMATE SOLUTION: Let user choose payment method
+        const isCtrlKeyPressed = event?.ctrlKey || event?.metaKey;
+        const isShiftKeyPressed = event?.shiftKey;
+
+        // CTRL+Click = Force Crypto, SHIFT+Click = Force Stripe, Normal = Auto-detect
+        let useCryptoPayment = false;
+
+        if (isCtrlKeyPressed) {
+          useCryptoPayment = true;
+          console.log('🔑 CTRL+Click detected - Using CRYPTO payment');
+        } else if (isShiftKeyPressed) {
+          useCryptoPayment = false;
+          console.log('🔑 SHIFT+Click detected - Using STRIPE payment');
+        } else {
+          // Auto-detect: check for cryptoOrderId
+          const hasCryptoOrderId = order?.cryptoPayment?.cryptoOrderId && order?.cryptoPayment?.cryptoOrderId !== '';
+          useCryptoPayment = hasCryptoOrderId;
+          console.log('🔍 Auto-detect:', { hasCryptoOrderId, useCryptoPayment });
+        }
+
+        if (useCryptoPayment) {
+          // Use crypto approval
           await approveCryptoOrder({
             orderId: `${order?.orderId}`,
             body: orderMessage
           });
-          showSuccessToast('Crypto payment released! Seller will receive ETH in their wallet.');
+          showSuccessToast('🎉 Crypto payment released! Seller will receive ETH in their wallet.');
         } else {
           // Use regular Stripe approval
           await approveOrder({ orderId: `${order?.orderId}`, body: orderMessage });
-          showSuccessToast('Gig approval successful.');
+          showSuccessToast('✅ Gig approval successful.');
         }
 
         setOrderDeliveredModal({ ...orderDeliveredModal, deliveryApproval: false });
@@ -233,7 +252,7 @@ const OrderDelivered: ForwardRefExoticComponent<Omit<IOrderDeliveredProps, 'ref'
                                       setOrderDeliveredModal({ ...orderDeliveredModal, deliveryApproval: true });
                                     }}
                                     label={
-                                      order?.paymentType === 'crypto' || order?.cryptoPayment
+                                      order?.cryptoPayment?.cryptoOrderId && order?.cryptoPayment?.cryptoOrderId !== ''
                                         ? 'Release ETH Payment'
                                         : 'Yes, Approve delivery'
                                     }
