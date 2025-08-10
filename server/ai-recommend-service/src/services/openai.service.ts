@@ -45,7 +45,7 @@ class OpenAIService {
       `
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4.1',
         messages: [{ role: 'user', content: prompt }],
         response_format: { type: 'json_object' },
         temperature: 0.1
@@ -177,7 +177,7 @@ class OpenAIService {
       `
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4.1',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.3,
         max_tokens: 100

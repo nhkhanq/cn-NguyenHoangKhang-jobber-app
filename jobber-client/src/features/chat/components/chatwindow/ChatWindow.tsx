@@ -84,17 +84,64 @@ const ChatWindow: FC<IChatWindowProps> = ({ chatMessages, isLoading, setSkip }):
     }
     try {
       setIsUploadingFile(MESSAGE_STATUS.LOADING);
+
+      // Determine receiver information properly
+      let receiverUsername: string;
+      let receiverPicture: string;
+
+      if (singleMessageRef?.current) {
+        // If sender is current user, receiver is the other user in the conversation
+        if (singleMessageRef.current.senderUsername === authUser?.username) {
+          receiverUsername = singleMessageRef.current.receiverUsername || '';
+          receiverPicture = singleMessageRef.current.receiverPicture || '';
+        } else {
+          receiverUsername = singleMessageRef.current.senderUsername || '';
+          receiverPicture = singleMessageRef.current.senderPicture || '';
+        }
+      } else if (receiverRef?.current) {
+        // Fallback to receiverRef if available (buyer data)
+        receiverUsername = receiverRef.current.username || '';
+        receiverPicture = receiverRef.current.profilePicture || '';
+      } else if (seller && authUser?.username !== seller.username) {
+        // If current user is buyer and seller is available
+        receiverUsername = seller.username || '';
+        receiverPicture = seller.profilePicture || '';
+      } else {
+        // Final fallback - use username from URL params (assume it's the receiver)
+        receiverUsername = username || '';
+        receiverPicture = '';
+      }
+
+      // Debug log for troubleshooting
+      console.log('ChatWindow sendMessage debug:', {
+        hasMessages: chatMessages.length > 0,
+        hasSingleMessage: !!singleMessageRef?.current,
+        hasReceiverRef: !!receiverRef?.current,
+        hasSeller: !!seller,
+        authUsername: authUser?.username,
+        sellerUsername: seller?.username,
+        urlUsername: username,
+        determinedReceiver: receiverUsername
+      });
+
+      // Validate receiver username before sending
+      if (!receiverUsername || receiverUsername.trim() === '') {
+        showErrorToast('Unable to determine receiver. Please refresh the chat.');
+        setIsUploadingFile(MESSAGE_STATUS.IS_LOADING);
+        return;
+      }
+
       const messageBody: IMessageDocument = {
         conversationId: singleMessageRef?.current?.conversationId,
-        hasConversationId: true,
+        hasConversationId: !!singleMessageRef?.current?.conversationId,
         body: message,
         gigId: singleMessageRef?.current?.gigId,
         sellerId: singleMessageRef?.current?.sellerId,
         buyerId: singleMessageRef?.current?.buyerId,
         senderUsername: `${authUser?.username}`,
         senderPicture: `${authUser?.profilePicture}`,
-        receiverUsername: receiverRef?.current?.username,
-        receiverPicture: receiverRef?.current?.profilePicture,
+        receiverUsername,
+        receiverPicture,
         isRead: false,
         hasOffer: false
       };
