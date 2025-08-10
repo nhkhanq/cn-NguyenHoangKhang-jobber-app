@@ -1,9 +1,7 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useState } from 'react';
 import { FaRobot, FaStar, FaHistory, FaTimes } from 'react-icons/fa';
 import { useGetRecommendationHistoryQuery } from '../services/ai-recommendation.service';
-import { useGetGigByIdQuery } from 'src/features/gigs/services/gigs.service';
 import { IAIRecommendationResponse, IAIGigMatch } from '../interfaces/ai-recommendation.interface';
-import { ISellerGig } from 'src/features/gigs/interfaces/gig.interface';
 import { useAppSelector } from 'src/store/store';
 import { IReduxState } from 'src/store/store.interface';
 import AISearchBox from './AISearchBox';
@@ -19,12 +17,11 @@ const AIRecommendations: FC<IAIRecommendationsProps> = ({ initialQuery = '', sho
   const [recommendations, setRecommendations] = useState<IAIRecommendationResponse | null>(null);
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [showHistoryPanel, setShowHistoryPanel] = useState(false);
-  const [gigDataCache, setGigDataCache] = useState<Record<string, ISellerGig>>({});
 
   const authUser = useAppSelector((state: IReduxState) => state.authUser);
 
   const { data: historyData } = useGetRecommendationHistoryQuery(
-    { userId: authUser.id, limit: 10 },
+    { userId: authUser.id?.toString() || '', limit: 10 },
     { skip: !authUser.id || !showHistory }
   );
 
@@ -33,22 +30,9 @@ const AIRecommendations: FC<IAIRecommendationsProps> = ({ initialQuery = '', sho
     setSearchPerformed(true);
   };
 
-  // Component to fetch and cache gig data
-  const GigDataFetcher: FC<{ gigId: string; match: IAIGigMatch }> = ({ gigId, match }) => {
-    const { data: gigData, isSuccess } = useGetGigByIdQuery(gigId);
-
-    useEffect(() => {
-      if (isSuccess && gigData?.gig) {
-        setGigDataCache((prev) => ({
-          ...prev,
-          [gigId]: gigData.gig as ISellerGig
-        }));
-      }
-    }, [isSuccess, gigData, gigId]);
-
-    const gig = gigDataCache[gigId];
-
-    return <AIRecommendationCard match={match} gig={gig} recommendationId={`${Date.now()}-${gigId}`} />;
+  // Render AI recommendation card directly with match data
+  const renderRecommendationCard = (match: IAIGigMatch, index: number) => {
+    return <AIRecommendationCard key={match.gigId} match={match} recommendationId={`${Date.now()}-${match.gigId}-${index}`} />;
   };
 
   const renderSearchSection = () => (
@@ -136,9 +120,7 @@ const AIRecommendations: FC<IAIRecommendationsProps> = ({ initialQuery = '', sho
 
         {/* Results Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recommendations.matches.map((match) => (
-            <GigDataFetcher key={match.gigId} gigId={match.gigId} match={match} />
-          ))}
+          {recommendations.matches.map((match, index) => renderRecommendationCard(match, index))}
         </div>
 
         {/* Performance Info */}
@@ -159,9 +141,10 @@ const AIRecommendations: FC<IAIRecommendationsProps> = ({ initialQuery = '', sho
   };
 
   const renderHistory = () => {
-    if (!showHistoryPanel || !historyData?.data?.history) return null;
+    if (!showHistoryPanel || !historyData) return null;
 
-    const history = historyData.data.history;
+    // Mock history data since backend not implemented yet
+    const history: any[] = [];
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">

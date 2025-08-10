@@ -32,6 +32,7 @@ export interface IGigMatch {
   basicDescription: string;
   username: string;
   profilePicture: string;
+  coverImage: string;
   price: number;
   similarity: number;
   explanation: string;
@@ -39,6 +40,10 @@ export interface IGigMatch {
   categories: string[];
   tags: string[];
   reasons?: string[];
+  ratingsCount?: number;
+  ratingSum?: number;
+  sellerId: string;
+  active?: boolean;
 }
 
 export interface IAISearchIntent {

@@ -40,8 +40,9 @@ const AISearchBox: FC<IAISearchBoxProps> = ({
 
       const result = await getRecommendations(request).unwrap();
 
-      if (result.data && onRecommendations) {
-        onRecommendations(result.data as IAIRecommendationResponse);
+      if (result && onRecommendations) {
+        const response = (result as any)?.data || result;
+        onRecommendations(response as IAIRecommendationResponse);
       }
 
       setShowSuggestions(false);
@@ -73,7 +74,7 @@ const AISearchBox: FC<IAISearchBoxProps> = ({
     return () => clearTimeout(timer);
   }, [query]);
 
-  const suggestions = suggestionsData?.data?.suggestions || [];
+  const suggestions: string[] = []; // TODO: implement suggestions when backend is ready
 
   return (
     <div className={`relative w-full max-w-4xl mx-auto ${className}`}>
@@ -134,7 +135,7 @@ const AISearchBox: FC<IAISearchBoxProps> = ({
               Loading suggestions...
             </div>
           ) : (
-            suggestions.map((suggestion, index) => (
+            suggestions.map((suggestion: string, index: number) => (
               <button
                 key={index}
                 onClick={() => handleSuggestionClick(suggestion)}

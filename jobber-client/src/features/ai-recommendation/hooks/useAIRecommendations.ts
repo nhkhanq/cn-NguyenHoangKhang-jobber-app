@@ -26,8 +26,9 @@ export const useAIRecommendations = () => {
 
       const result = await getRecommendations(fullRequest).unwrap()
       
-      if (result.data) {
-        setRecommendations(result.data as IAIRecommendationResponse)
+      if (result) {
+        const response = (result as any)?.data || result;
+        setRecommendations(response as IAIRecommendationResponse)
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred while getting recommendations')

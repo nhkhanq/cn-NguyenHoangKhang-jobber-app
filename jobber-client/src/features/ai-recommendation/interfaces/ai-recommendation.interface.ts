@@ -9,10 +9,24 @@ export interface IAIRecommendationRequest {
 
 export interface IAIGigMatch {
   gigId: string
+  title: string
+  description: string
+  basicTitle: string
+  basicDescription: string
+  username: string
+  profilePicture: string
+  coverImage: string
+  price: number
   similarity: number
   explanation: string
   reasons: string[]
   confidence: number
+  categories: string[]
+  tags: string[]
+  ratingsCount?: number
+  ratingSum?: number
+  sellerId: string
+  active?: boolean
 }
 
 export interface IAIRecommendationResponse {

@@ -171,13 +171,18 @@ class RecommendationService {
           basicDescription: gig.basicDescription || '',
           username: gig.username || '',
           profilePicture: gig.profilePicture || '',
+          coverImage: gig.coverImage || '',
           price: gig.price || 0,
           similarity: adjustedSimilarity,
           explanation,
           confidence: this.calculateConfidence(adjustedSimilarity, reasons.length),
           categories: Array.isArray(gig.categories) ? gig.categories : [gig.categories || ''],
           tags: Array.isArray(gig.tags) ? gig.tags : [],
-          reasons
+          reasons,
+          ratingsCount: gig.ratingsCount || 0,
+          ratingSum: gig.ratingSum || 0,
+          sellerId: gig.sellerId?.toString() || '',
+          active: gig.active !== false
         })
       } catch (error) {
         log.error(`Error calculating similarity for gig ${gig._id}:`, error)

@@ -1,9 +1,6 @@
 import { FC, useState } from 'react';
 import { FaRobot, FaChevronRight, FaStar } from 'react-icons/fa';
-import { useGetAIRecommendationsMutation } from '../services/ai-recommendation.service';
 import { IAIRecommendationResponse } from '../interfaces/ai-recommendation.interface';
-import { useAppSelector } from 'src/store/store';
-import { IReduxState } from 'src/store/store.interface';
 import AISearchBox from './AISearchBox';
 import AIRecommendationCard from './AIRecommendationCard';
 
@@ -26,8 +23,6 @@ const AIRecommendationSection: FC<IAIRecommendationSectionProps> = ({
 }) => {
   const [recommendations, setRecommendations] = useState<IAIRecommendationResponse | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const authUser = useAppSelector((state: IReduxState) => state.authUser);
 
   const handleRecommendations = (newRecommendations: IAIRecommendationResponse) => {
     setRecommendations(newRecommendations);

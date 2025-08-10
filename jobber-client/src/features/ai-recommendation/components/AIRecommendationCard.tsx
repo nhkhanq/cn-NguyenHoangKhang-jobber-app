@@ -6,12 +6,11 @@ import { useProvideFeedbackMutation } from '../services/ai-recommendation.servic
 
 interface IAIRecommendationCardProps {
   match: IAIGigMatch;
-  gig?: any; // ISellerGig from actual gig data
   recommendationId?: string;
   onFeedback?: (helpful: boolean) => void;
 }
 
-const AIRecommendationCard: FC<IAIRecommendationCardProps> = ({ match, gig, recommendationId, onFeedback }) => {
+const AIRecommendationCard: FC<IAIRecommendationCardProps> = ({ match, recommendationId, onFeedback }) => {
   const [feedbackGiven, setFeedbackGiven] = useState(false);
   const [provideFeedback] = useProvideFeedbackMutation();
 
@@ -73,55 +72,62 @@ const AIRecommendationCard: FC<IAIRecommendationCardProps> = ({ match, gig, reco
 
       {/* Gig Content */}
       <div className="p-6">
-        {gig ? (
-          <div>
-            {/* Gig Image */}
-            {gig.coverImage && (
-              <div className="mb-4">
-                <img src={gig.coverImage} alt={gig.title} className="w-full h-48 object-cover rounded-lg" />
-              </div>
-            )}
+        <div>
+          {/* Gig Image */}
+          {match.coverImage && (
+            <div className="mb-4">
+              <img
+                src={match.coverImage}
+                alt={match.title}
+                className="w-full h-48 object-cover rounded-lg"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://placehold.co/400x200?text=No+Image';
+                }}
+              />
+            </div>
+          )}
 
-            {/* Gig Details */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{gig.title}</h3>
+          {/* Gig Details */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{match.title}</h3>
 
-              <p className="text-gray-600 text-sm line-clamp-3">{gig.basicDescription}</p>
+            <p className="text-gray-600 text-sm line-clamp-3">{match.basicDescription}</p>
 
-              {/* Seller Info */}
-              <div className="flex items-center space-x-3">
-                <img src={gig.profilePicture || '/default-avatar.png'} alt={gig.username} className="w-8 h-8 rounded-full" />
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{gig.username}</p>
-                  <div className="flex items-center space-x-1">
-                    <FaStar className="text-yellow-400 text-xs" />
-                    <span className="text-xs text-gray-600">
-                      {gig.ratingSum && gig.ratingsCount ? (gig.ratingSum / gig.ratingsCount).toFixed(1) : 'New'} ({gig.ratingsCount || 0})
-                    </span>
-                  </div>
+            {/* Seller Info */}
+            <div className="flex items-center space-x-3">
+              <img
+                src={match.profilePicture || '/default-avatar.png'}
+                alt={match.username}
+                className="w-8 h-8 rounded-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://placehold.co/32x32?text=Avatar';
+                }}
+              />
+              <div>
+                <p className="text-sm font-medium text-gray-900">{match.username}</p>
+                <div className="flex items-center space-x-1">
+                  <FaStar className="text-yellow-400 text-xs" />
+                  <span className="text-xs text-gray-600">
+                    {match.ratingSum && match.ratingsCount ? (match.ratingSum / match.ratingsCount).toFixed(1) : 'New'} (
+                    {match.ratingsCount || 0})
+                  </span>
                 </div>
               </div>
+            </div>
 
-              {/* Price and Action */}
-              <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                <div className="text-lg font-bold text-gray-900">From ${gig.price}</div>
-                <Link
-                  to={`/gig/${gig._id}/${gig.title.replace(/\s+/g, '-').toLowerCase()}`}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
-                >
-                  <span>View Gig</span>
-                  <FaExternalLinkAlt className="text-xs" />
-                </Link>
-              </div>
+            {/* Price and Action */}
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+              <div className="text-lg font-bold text-gray-900">From ${match.price}</div>
+              <Link
+                to={`/gig/${match.username.toLowerCase()}/${match.title.replace(/\s+/g, '-').toLowerCase()}/${match.sellerId}/${match.gigId}/view`}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
+              >
+                <span>View Gig</span>
+                <FaExternalLinkAlt className="text-xs" />
+              </Link>
             </div>
           </div>
-        ) : (
-          // Fallback when gig data not available
-          <div className="text-center py-8 text-gray-500">
-            <p>Gig details not available</p>
-            <p className="text-sm mt-1">Gig ID: {match.gigId}</p>
-          </div>
-        )}
+        </div>
 
         {/* Match Reasons */}
         {match.reasons.length > 0 && (
